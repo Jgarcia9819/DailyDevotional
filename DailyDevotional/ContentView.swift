@@ -5,17 +5,16 @@
 //  Created by Joshua Garcia on 6/1/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
-        NavigationStack {
-            NavTabView()
-        }
-        
+
+        NavTabView()
+
     }
 
 }

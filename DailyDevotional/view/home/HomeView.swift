@@ -1,24 +1,30 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
 
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Welcome to Daily Devotional")
-                    .font(.largeTitle)
-                    .padding()
-                
-                // Add more content here as needed
+            List {
+                Section("Devotional") {
+                    Text("Devotional content here")
+                        .font(.subheadline)
+                }
+                Section("Reflection") {
+                    TextField(">", text: .constant(""))
+                }
+                Section("Prayer") {
+                    Text("Prayer content here")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
             }
-            .navigationTitle("Home")
         }
     }
 }
 
-struct MockData{
+struct MockData {
     var title = "devotional1"
     var content = "This is a sample devotional content."
     var date = Date()
