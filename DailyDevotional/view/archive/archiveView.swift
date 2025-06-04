@@ -3,16 +3,17 @@ import SwiftUI
 
 struct ArchiveView: View {
     @Environment(\.modelContext) private var modelContext
+    @ObservedObject var bibleService: BibleService
 
     var body: some View {
         NavigationStack {
-            List {
+            List(bibleService.devotionals, id: \.id) { devotional in
                 Section {
-                    Text("Genesis 1:1-5 (ESV)")
+                    Text(devotional.book)
                         .font(.subheadline)
                 }
             }
-
+            .navigationTitle("Archive")
         }
 
     }

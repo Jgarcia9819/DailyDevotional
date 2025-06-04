@@ -20,6 +20,7 @@ struct HomeView: View {
                         .foregroundColor(.secondary)
                 }
             }
+            .navigationTitle("Today")
         }
     }
 }

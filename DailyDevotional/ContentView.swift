@@ -10,16 +10,19 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+    @StateObject private var bibleService = BibleService()
 
     var body: some View {
+        NavTabView(bibleService: bibleService)
+            .task {
+                do {
+                    print("Fetching devotionals...")
 
-        NavTabView()
-
+                    try await bibleService.getDevotionals()
+                } catch {
+                    print("Error fetching devotionals: \(error.localizedDescription)")
+                }
+            }
     }
 
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(try! ModelContainer(for: Schema([])))
 }
