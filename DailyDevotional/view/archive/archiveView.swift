@@ -3,7 +3,7 @@ import SwiftUI
 
 struct ArchiveView: View {
     @Environment(\.modelContext) private var modelContext
-    @ObservedObject var bibleService: BibleService
+    @ObservedObject var bibleService = BibleService.shared
 
     var body: some View {
         NavigationStack {

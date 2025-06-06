@@ -3,26 +3,64 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
-
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var homeViewModel = HomeViewModel.shared
+    @FocusState private var isTextEditorFocused: Bool
     var body: some View {
         NavigationStack {
             List {
-                Section("Devotional") {
-                    Text("Devotional content here")
+                Section {
+                    ForEach(homeViewModel.bibleData, id: \.id) { verse in
+                        Text("\(verse.verse_start) \(verse.verse_text)")
+
+                    }
+                } header: {
+                    HStack {
+
+                        Text(homeViewModel.todayDevotional?.book ?? "")
+                            .font(.subheadline)
+                        Text(
+                            "\(homeViewModel.todayDevotional?.chapter ?? 0):\(homeViewModel.todayDevotional?.start ?? 0)-\(homeViewModel.todayDevotional?.end ?? 0)"
+                        )
                         .font(.subheadline)
+
+                    }
                 }
                 Section("Reflection") {
-                    TextField(">", text: .constant(""))
+                    TextEditor(text: $homeViewModel.entryText)
+                        .focused($isTextEditorFocused)
+                        .overlay(alignment: .topLeading) {
+                            if homeViewModel.entryText.isEmpty {
+                                Text("Enter your text here...")
+                                    .foregroundColor(.gray)
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 8)
+                                    .allowsHitTesting(false)
+                            }
+
+                        }
+
                 }
-                Section("Prayer") {
-                    Text("Prayer content here")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+                .navigationTitle("Today")
+            }
+            .toolbar {
+                ToolbarItem(placement: .keyboard) {
+                    HStack {
+                        Spacer()
+                        Button("Done") {
+                            isTextEditorFocused = false
+                        }
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("", systemImage: "checkmark.circle") {
+                    }
                 }
             }
-            .navigationTitle("Today")
         }
+
     }
+
 }
 
 struct MockData {

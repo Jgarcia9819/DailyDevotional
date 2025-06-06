@@ -4,7 +4,6 @@ import SwiftUI
 struct NavTabView: View {
     @State private var selectedTab: Int = 0
     @Environment(\.modelContext) private var modelContext
-    @ObservedObject var bibleService: BibleService
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -12,7 +11,7 @@ struct NavTabView: View {
                 HomeView()
             }
             Tab("", systemImage: "list.bullet.rectangle.portrait.fill", value: 1) {
-                ArchiveView(bibleService: bibleService)
+                ArchiveView()
             }
             Tab("", systemImage: "gear", value: 2) {
                 SettingsView()

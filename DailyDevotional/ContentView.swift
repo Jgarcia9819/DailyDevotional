@@ -10,15 +10,17 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var bibleService = BibleService()
 
     var body: some View {
-        NavTabView(bibleService: bibleService)
+        NavTabView()
             .task {
                 do {
-                    print("Fetching devotionals...")
+                    let bibleService = BibleService.shared
+                    let homeViewModel = HomeViewModel.shared
 
                     try await bibleService.getDevotionals()
+                    try await homeViewModel.fetchTodayDevotional()
+                    try await homeViewModel.fetchBibleData()
                 } catch {
                     print("Error fetching devotionals: \(error.localizedDescription)")
                 }

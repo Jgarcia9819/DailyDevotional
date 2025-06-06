@@ -5,14 +5,14 @@
 //  Created by Joshua Garcia on 6/1/25.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
+import UIKit
 
 @main
 struct DailyDevotionalApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-        ])
+        let schema = Schema([])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
@@ -21,6 +21,10 @@ struct DailyDevotionalApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+    init() {
+        UITabBar.appearance().backgroundColor = UIColor.white
+        UITabBar.appearance().unselectedItemTintColor = UIColor.gray
+    }
 
     var body: some Scene {
         WindowGroup {
