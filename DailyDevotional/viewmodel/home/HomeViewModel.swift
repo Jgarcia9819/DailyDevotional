@@ -4,8 +4,11 @@ import SwiftUI
 class HomeViewModel: ObservableObject {
     static let shared = HomeViewModel()
     @Published var todayDevotional: Devotional?
+    @Published var randomDevotional: Devotional?
     @Published var bibleData: [BibleData] = []
+    @Published var randomBibleData: [BibleData] = []
     @Published var entryText: String = ""
+    @Published var saved: Bool = false
 
     func fetchTodayDevotional() async {
         let bibleService = BibleService.shared
@@ -40,6 +43,43 @@ class HomeViewModel: ObservableObject {
             }
             await MainActor.run {
                 self.bibleData = filtered
+            }
+        } catch {
+            print("Error fetching Bible data: \(error)")
+        }
+    }
+
+    func fetchRandomDevotional() async {
+        let bibleService = BibleService.shared
+
+        guard !bibleService.devotionals.isEmpty else {
+            return
+        }
+
+        await MainActor.run {
+            self.randomDevotional = bibleService.getRandomDevotional()
+        }
+    }
+
+    func fetchRandomBibleData() async {
+        let bibleService = BibleService.shared
+
+        guard let randomDevotional = randomDevotional else {
+            return
+        }
+
+        do {
+            let data = try await bibleService.getBibleData(
+                book: randomDevotional.abbreviation,
+                chapter: randomDevotional.chapter
+            )
+            let filtered = data.filter { verse in
+                let start = randomDevotional.start
+                let end = randomDevotional.end
+                return verse.verse_start >= start && verse.verse_start <= end
+            }
+            await MainActor.run {
+                self.randomBibleData = filtered
             }
         } catch {
             print("Error fetching Bible data: \(error)")

@@ -11,8 +11,9 @@ import UIKit
 
 @main
 struct DailyDevotionalApp: App {
+    @Environment(\.colorScheme) private var colorScheme
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([])
+        let schema = Schema([Entry.self])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
@@ -21,10 +22,6 @@ struct DailyDevotionalApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
-    init() {
-        UITabBar.appearance().backgroundColor = UIColor.white
-        UITabBar.appearance().unselectedItemTintColor = UIColor.gray
-    }
 
     var body: some Scene {
         WindowGroup {

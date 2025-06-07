@@ -21,6 +21,8 @@ struct ContentView: View {
                     try await bibleService.getDevotionals()
                     try await homeViewModel.fetchTodayDevotional()
                     try await homeViewModel.fetchBibleData()
+                    try await homeViewModel.fetchRandomDevotional()
+                    try await homeViewModel.fetchRandomBibleData()
                 } catch {
                     print("Error fetching devotionals: \(error.localizedDescription)")
                 }

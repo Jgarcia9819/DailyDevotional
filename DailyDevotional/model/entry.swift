@@ -2,12 +2,14 @@ import Foundation
 import SwiftData
 
 @Model
-final class Entry {
-    var devoID: String
+final class Entry: Identifiable {
+    var devoID: Int
     var createdAt: Date
     var content: String
+    var saved: Bool = false
 
-    init(devoID: String, createdAt: Date = Date(), content: String) {
+    init(devoID: Int, createdAt: Date = Date(), content: String, saved: Bool = false) {
+        self.saved = saved
         self.devoID = devoID
         self.createdAt = createdAt
         self.content = content

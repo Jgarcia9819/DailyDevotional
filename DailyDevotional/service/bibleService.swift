@@ -58,6 +58,10 @@ class BibleService: ObservableObject {
         }
     }
 
+    func getRandomDevotional() -> Devotional? {
+        return devotionals.randomElement()
+    }
+
     func getBibleData(book: String, chapter: Int) async throws -> [BibleData] {
         let urlString = "\(bibleURL)\(book)/\(chapter)"
         guard let url = URL(string: urlString) else {
