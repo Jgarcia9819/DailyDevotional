@@ -10,11 +10,14 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+    @ObservedObject var bibleService = BibleService.shared
 
     var body: some View {
         NavTabView()
             .task {
                 do {
+                    bibleService.loading = true
+                    defer { bibleService.loading = false }
                     let bibleService = BibleService.shared
                     let homeViewModel = HomeViewModel.shared
 

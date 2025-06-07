@@ -37,6 +37,7 @@ class BibleService: ObservableObject {
     let devotionalURL = "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/devotions"
     let bibleURL = "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/data/"
     @Published var devotionals: [Devotional] = []
+    @Published var loading: Bool = false
     static let shared = BibleService()
 
     func getDevotionals() async throws {

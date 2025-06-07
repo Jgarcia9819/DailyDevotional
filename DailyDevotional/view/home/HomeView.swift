@@ -4,26 +4,29 @@ import SwiftUI
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var homeViewModel = HomeViewModel.shared
+    @ObservedObject var bibleService = BibleService.shared
     @FocusState private var isTextEditorFocused: Bool
+    @State private var buttonTrigger: Bool = false
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    ForEach(homeViewModel.randomBibleData, id: \.id) { verse in
-                        Text("\(verse.verse_start)") + Text("\(verse.verse_text)")
-
+                if bibleService.loading {
+                    Section {
+                        ProgressView()
+                            .progressViewStyle(
+                                CircularProgressViewStyle(
+                                    tint: colorScheme == .dark ? .white : .blue)
+                            )
+                            .frame(maxWidth: .infinity, alignment: .center)
                     }
-                } header: {
-                    HStack {
-
-                        Text(homeViewModel.randomDevotional?.book ?? "")
-                            .font(.subheadline)
+                } else {
+                    Section {
                         Text(
-                            "\(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
-                        )
-                        .font(.subheadline)
-
+                            homeViewModel.randomBibleData.map { verse in
+                                "\(verse.verse_start) \(verse.verse_text)"
+                            }.joined(separator: " "))
                     }
                 }
                 Section("Reflection") {
@@ -41,7 +44,14 @@ struct HomeView: View {
                         }
 
                 }
-                .navigationTitle("Today")
+
+                .navigationTitle(
+                    bibleService.loading
+                        ? ""
+                        : "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
+                )
+                .navigationBarTitleDisplayMode(.large)
+
             }
             .toolbar {
                 ToolbarItem(placement: .keyboard) {
@@ -58,28 +68,17 @@ struct HomeView: View {
                         systemImage: homeViewModel.saved
                             ? "checkmark.circle.fill" : "checkmark.circle"
                     ) {
-                        homeViewModel.saved = true
-                        guard let devotional = homeViewModel.randomDevotional else {
-                            return
-                        }
-
-                        let entry = Entry(
-                            devoID: devotional.id, createdAt: Date(),
-                            content: homeViewModel.entryText,
-                            saved: true)
-
-                        modelContext.insert(entry)
-                        do {
-
-                            try modelContext.save()
-                            print("Entry saved successfully")
-
-                            homeViewModel.entryText = ""
-                        } catch {
-                            print("Error saving entry: \(error)")
-                        }
-                        dismiss()
+                        saveEntry(
+                            homeViewModel: homeViewModel, modelContext: modelContext,
+                            dismiss: dismiss)
+                        isTextEditorFocused = false
+                        buttonTrigger.toggle()
                     }
+                    .disabled(homeViewModel.entryText.isEmpty)
+                    .sensoryFeedback(
+                        .success,
+                        trigger: buttonTrigger
+                    )
                 }
             }
             .refreshable {
@@ -90,6 +89,32 @@ struct HomeView: View {
             }
         }
 
+    }
+
+    //because swiftdata does not play nice with MVVM architecture, we place crud functionality in the views
+    func saveEntry(homeViewModel: HomeViewModel, modelContext: ModelContext, dismiss: DismissAction)
+    {
+        homeViewModel.saved = true
+        guard let devotional = homeViewModel.randomDevotional else {
+            return
+        }
+
+        let entry = Entry(
+            id: UUID(),  // Generate a new UUID for the entry
+            devoID: devotional.id, createdAt: Date(),
+            content: homeViewModel.entryText,
+            saved: true)
+
+        modelContext.insert(entry)
+        do {
+
+            try modelContext.save()
+            print("Entry saved successfully")
+            homeViewModel.entryText = ""
+        } catch {
+            print("Error saving entry: \(error)")
+        }
+        dismiss()
     }
 
 }
