@@ -6,16 +6,19 @@ struct ArchiveView: View {
     @ObservedObject var bibleService = BibleService.shared
     @Query(sort: \Entry.createdAt, order: .reverse) private var entries: [Entry]
     @State private var isDeleting: Bool = false
+    @State private var isShowingEditView: Bool = false
+    @State private var entryToEdit: Entry? = nil
+    @State private var entryToDelete: Entry? = nil
 
     var body: some View {
         NavigationStack {
             if entries.isEmpty {
                 List {
                     Section {
-                        Text("No entries found.")
+                        Text("No saved entries yet")
                             .font(.headline)
                             .foregroundColor(.gray)
-                            .padding()
+
                     }
                     .navigationTitle("Archive")
                 }
@@ -25,23 +28,43 @@ struct ArchiveView: View {
                         Text(entry.content)
                             .font(.body)
                             .padding(.bottom, 2)
+                    } header: {
+                        Text(entry.createdAt, style: .date)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        Button(role: .destructive) {
-                            isDeleting = true
-                        } label: {
-                            Label("Delete", systemImage: "trash")
+                        HStack {
+                            Button(role: .destructive) {
+                                isDeleting = true
+                                entryToDelete = entry
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            .tint(.red)
+                            Button {
+                                isShowingEditView = true
+                                DispatchQueue.main.async {
+                                    entryToEdit = entry
+                                }
+                            } label: {
+                                Label("Edit", systemImage: "pencil")
+                            }
                         }
-                        .tint(.red)
                     }
+                    .navigationTitle("Archive")
                 }
-                .navigationTitle("Archive")
-            }
 
+            }
+        }
+        .sheet(isPresented: $isShowingEditView) {
+            if let entryToEdit = entryToEdit {
+                EditView(entry: entryToEdit)
+            }
         }
         .alert("Delete Entry? This cannot be undone.", isPresented: $isDeleting) {
             Button("Delete", role: .destructive) {
-                if let entryToDelete = entries.first {
+                if let entryToDelete = entryToDelete {
                     deleteEntry(entry: entryToDelete)
                 }
                 isDeleting = false

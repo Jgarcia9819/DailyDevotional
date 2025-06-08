@@ -23,10 +23,13 @@ struct HomeView: View {
                     }
                 } else {
                     Section {
-                        Text(
-                            homeViewModel.randomBibleData.map { verse in
-                                "\(verse.verse_start) \(verse.verse_text)"
-                            }.joined(separator: " "))
+                        homeViewModel.randomBibleData.reduce(Text("")) { result, verse in
+                            result
+                                + Text("\(verse.verse_start)").font(.caption)
+                                .foregroundColor(.secondary).baselineOffset(3)
+                                + Text(" \(verse.verse_text) ")
+                        }
+                        .textSelection(.enabled)
                     }
                 }
                 Section("Reflection") {
@@ -50,7 +53,6 @@ struct HomeView: View {
                         ? ""
                         : "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
                 )
-                .navigationBarTitleDisplayMode(.large)
 
             }
             .toolbar {
