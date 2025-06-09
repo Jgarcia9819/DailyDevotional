@@ -7,10 +7,20 @@
 
 import SwiftData
 import SwiftUI
+import UIKit
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @ObservedObject var bibleService = BibleService.shared
+
+    init() {
+        UINavigationBar.appearance().largeTitleTextAttributes = [
+            .font: UIFont(
+                descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .largeTitle)
+                    .withDesign(.serif)!, size: 34),
+            .foregroundColor: UIColor.label,
+        ]
+    }
 
     var body: some View {
         NavTabView()

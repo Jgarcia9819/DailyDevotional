@@ -20,18 +20,21 @@ struct ArchiveView: View {
                             .foregroundColor(.gray)
 
                     }
-                    .navigationTitle("Archive")
                 }
+                .navigationTitle("Archive")
+
             } else {
                 List(entries, id: \.id) { entry in
                     Section {
                         Text(entry.content)
-                            .font(.body)
                             .padding(.bottom, 2)
+                            .font(.system(size: 16, weight: .regular, design: .serif))
+
                     } header: {
                         Text(entry.createdAt, style: .date)
-                            .font(.caption)
                             .foregroundColor(.secondary)
+                            .font(.system(size: 13, weight: .regular, design: .serif))
+
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         HStack {
@@ -52,11 +55,11 @@ struct ArchiveView: View {
                             }
                         }
                     }
-                    .navigationTitle("Archive")
                 }
-
+                .navigationTitle("Archive")
             }
         }
+
         .sheet(isPresented: $isShowingEditView) {
             if let entryToEdit = entryToEdit {
                 EditView(entry: entryToEdit)

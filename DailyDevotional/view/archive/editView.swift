@@ -6,13 +6,30 @@ struct EditView: View {
     @Environment(\.dismiss) private var dismiss
     @State var entry: Entry
     @State private var editedContent: String = ""
+    @ObservedObject var bibleService = BibleService.shared
+    @ObservedObject var homeViewModel = HomeViewModel.shared
+    @ObservedObject var editViewModel = EditViewModel.shared
 
     var body: some View {
         NavigationStack {
             Form {
-                Section("Content") {
+                Section {
+                    editViewModel.editedBibleData.reduce(Text("")) { result, verse in
+                        result
+                            + Text("\(verse.verse_start)").font(.caption)
+                            .foregroundColor(.secondary).baselineOffset(3)
+                            + Text(" \(verse.verse_text) ")
+                    }
+                    .textSelection(.enabled)
+                    .font(.system(size: 16, weight: .regular, design: .serif))
+                }
+                Section {
                     TextEditor(text: $entry.content)
+                        .font(.system(size: 16, weight: .regular, design: .serif))
 
+                } header: {
+                    Text("Reflection")
+                        .font(.system(size: 13, weight: .regular, design: .serif))
                 }
             }
             .toolbar {
@@ -27,6 +44,11 @@ struct EditView: View {
                         dismiss()
                     }
                 }
+            }
+        }
+        .onAppear {
+            Task {
+                await editViewModel.getEditedBibleData(entry: entry)
             }
         }
     }

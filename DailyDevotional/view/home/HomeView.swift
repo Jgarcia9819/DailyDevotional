@@ -30,11 +30,14 @@ struct HomeView: View {
                                 + Text(" \(verse.verse_text) ")
                         }
                         .textSelection(.enabled)
+                        .font(.system(size: 20, weight: .regular, design: .serif))
+                        .lineSpacing(4)
                     }
                 }
-                Section("Reflection") {
+                Section {
                     TextEditor(text: $homeViewModel.entryText)
                         .focused($isTextEditorFocused)
+                        .font(.system(size: 16, weight: .regular, design: .serif))
                         .overlay(alignment: .topLeading) {
                             if homeViewModel.entryText.isEmpty {
                                 Text("Enter your text here...")
@@ -42,19 +45,23 @@ struct HomeView: View {
                                     .padding(.horizontal, 4)
                                     .padding(.vertical, 8)
                                     .allowsHitTesting(false)
+                                    .font(.system(size: 16, weight: .regular, design: .serif))
+
                             }
 
                         }
 
+                } header: {
+                    Text("Reflection")
+                        .font(.system(size: 13, weight: .regular, design: .serif))
                 }
-
-                .navigationTitle(
-                    bibleService.loading
-                        ? ""
-                        : "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
-                )
-
             }
+            .navigationTitle(
+                bibleService.loading
+                    ? ""
+                    : "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
+            )
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .keyboard) {
                     HStack {
