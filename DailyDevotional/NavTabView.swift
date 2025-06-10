@@ -19,6 +19,7 @@ struct NavTabView: View {
                 SettingsView()
             }
         }
+        .tint(colorScheme == .dark ? .white : .black)
         .onAppear {
             #if os(iOS)
                 if #available(iOS 18.0, *) {
