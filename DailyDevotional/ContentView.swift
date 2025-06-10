@@ -17,7 +17,14 @@ struct ContentView: View {
         UINavigationBar.appearance().largeTitleTextAttributes = [
             .font: UIFont(
                 descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .largeTitle)
-                    .withDesign(.serif)!, size: 34),
+                    .withDesign(.serif)!, size: 30),
+            .foregroundColor: UIColor.label,
+        ]
+
+        UINavigationBar.appearance().titleTextAttributes = [
+            .font: UIFont(
+                descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .title1)
+                    .withDesign(.serif)!, size: 17),  // Smaller size for collapsed state
             .foregroundColor: UIColor.label,
         ]
     }

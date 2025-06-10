@@ -51,9 +51,10 @@ class BibleService: ObservableObject {
         }
         do {
             let decoder = JSONDecoder()
-            self.devotionals = try decoder.decode([Devotional].self, from: data)
-            print("devotionals: \(self.devotionals)")
-
+            let devotionals = try decoder.decode([Devotional].self, from: data)
+            await MainActor.run {
+                self.devotionals = devotionals
+            }
         } catch {
             throw error
         }
@@ -76,7 +77,6 @@ class BibleService: ObservableObject {
         do {
             let decoder = JSONDecoder()
             let bibleData = try decoder.decode(BibleDataResponse.self, from: data)
-            print("bibleData: \(bibleData)")
             return bibleData.data
 
         } catch {

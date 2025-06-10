@@ -1,9 +1,11 @@
 import SwiftData
 import SwiftUI
+import UIKit
 
 struct NavTabView: View {
     @State private var selectedTab: Int = 0
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -17,6 +19,17 @@ struct NavTabView: View {
                 SettingsView()
             }
         }
+        .onAppear {
+            #if os(iOS)
+                if #available(iOS 18.0, *) {
+                    if colorScheme == .light {
+                        let appearance = UITabBarAppearance()
+                        appearance.backgroundColor = UIColor.white
+                        UITabBar.appearance().standardAppearance = appearance
+                        UITabBar.appearance().scrollEdgeAppearance = appearance
+                    }
+                }
+            #endif
+        }
     }
-
 }

@@ -31,10 +31,13 @@ struct ArchiveView: View {
                             .font(.system(size: 16, weight: .regular, design: .serif))
 
                     } header: {
-                        Text(entry.createdAt, style: .date)
-                            .foregroundColor(.secondary)
-                            .font(.system(size: 13, weight: .regular, design: .serif))
-
+                        HStack {
+                            Text("\(entry.book) \(entry.chapter):\(entry.start)-\(entry.end)")
+                            Spacer()
+                            Text(entry.createdAt, style: .date)
+                                .foregroundColor(.secondary)
+                                .font(.system(size: 13, weight: .regular, design: .serif))
+                        }
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                         HStack {

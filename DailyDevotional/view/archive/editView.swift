@@ -26,6 +26,7 @@ struct EditView: View {
                 Section {
                     TextEditor(text: $entry.content)
                         .font(.system(size: 16, weight: .regular, design: .serif))
+                        .frame(minHeight: 150)
 
                 } header: {
                     Text("Reflection")

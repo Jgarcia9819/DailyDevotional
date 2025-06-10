@@ -1,7 +1,15 @@
 import SwiftData
 import SwiftUI
 
+extension Font {
+    static func customBibleTextSize(size: CGFloat) -> Font {
+        return .system(size: size, weight: .regular, design: .serif)
+    }
+}
+
 struct HomeView: View {
+    @AppStorage("customFontSize") var customFontSize: Double = 17
+    @AppStorage("customLineSize") var customLineSize: Double = 3
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -9,6 +17,8 @@ struct HomeView: View {
     @ObservedObject var bibleService = BibleService.shared
     @FocusState private var isTextEditorFocused: Bool
     @State private var buttonTrigger: Bool = false
+    @State private var showingFontEditSheet: Bool = false
+
     var body: some View {
         NavigationStack {
             List {
@@ -25,13 +35,15 @@ struct HomeView: View {
                     Section {
                         homeViewModel.randomBibleData.reduce(Text("")) { result, verse in
                             result
-                                + Text("\(verse.verse_start)").font(.caption)
+                                + Text("\(verse.verse_start)").font(
+                                    .customBibleTextSize(size: customFontSize - 4)
+                                )
                                 .foregroundColor(.secondary).baselineOffset(3)
                                 + Text(" \(verse.verse_text) ")
                         }
                         .textSelection(.enabled)
-                        .font(.system(size: 20, weight: .regular, design: .serif))
-                        .lineSpacing(4)
+                        .font(.customBibleTextSize(size: customFontSize))
+                        .lineSpacing(customLineSize)
                     }
                 }
                 Section {
@@ -56,38 +68,45 @@ struct HomeView: View {
                         .font(.system(size: 13, weight: .regular, design: .serif))
                 }
             }
+            .onTapGesture {
+                isTextEditorFocused = false
+            }
             .navigationTitle(
                 bibleService.loading
                     ? ""
                     : "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
             )
             .navigationBarTitleDisplayMode(.large)
+            .sheet(isPresented: $showingFontEditSheet) {
+                FontSettingsView()
+                    .presentationDetents([.height(300)])
+                    .presentationDragIndicator(.visible)
+            }
+
             .toolbar {
-                ToolbarItem(placement: .keyboard) {
-                    HStack {
-                        Spacer()
-                        Button("Done") {
-                            isTextEditorFocused = false
-                        }
-                    }
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(
-                        "",
-                        systemImage: homeViewModel.saved
-                            ? "checkmark.circle.fill" : "checkmark.circle"
-                    ) {
-                        saveEntry(
-                            homeViewModel: homeViewModel, modelContext: modelContext,
-                            dismiss: dismiss)
-                        isTextEditorFocused = false
-                        buttonTrigger.toggle()
+                    HStack {
+                        Button("", systemImage: "textformat.size") {
+                            showingFontEditSheet = true
+                        }
+                        .tint(.gray)
+                        Button(
+                            "",
+                            systemImage: homeViewModel.saved
+                                ? "checkmark.circle.fill" : "checkmark.circle"
+                        ) {
+                            saveEntry(
+                                homeViewModel: homeViewModel, modelContext: modelContext,
+                                dismiss: dismiss)
+                            isTextEditorFocused = false
+                            buttonTrigger.toggle()
+                        }
+                        .disabled(homeViewModel.entryText.isEmpty)
+                        .sensoryFeedback(
+                            .success,
+                            trigger: buttonTrigger
+                        )
                     }
-                    .disabled(homeViewModel.entryText.isEmpty)
-                    .sensoryFeedback(
-                        .success,
-                        trigger: buttonTrigger
-                    )
                 }
             }
             .refreshable {
@@ -110,9 +129,15 @@ struct HomeView: View {
 
         let entry = Entry(
             id: UUID(),  // Generate a new UUID for the entry
-            devoID: devotional.id, createdAt: Date(),
+            devoID: devotional.id,
+            createdAt: Date(),
             content: homeViewModel.entryText,
-            saved: true)
+            saved: true,
+            book: devotional.book,
+            chapter: devotional.chapter,
+            start: devotional.start,
+            end: devotional.end)
+        print(devotional.book, devotional.chapter)
 
         modelContext.insert(entry)
         do {
