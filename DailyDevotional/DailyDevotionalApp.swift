@@ -13,7 +13,7 @@ import UIKit
 struct DailyDevotionalApp: App {
     @Environment(\.colorScheme) private var colorScheme
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([Entry.self])
+        let schema = Schema([Entry.self, Saved.self])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {

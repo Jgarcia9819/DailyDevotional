@@ -1,12 +1,6 @@
 import SwiftData
 import SwiftUI
 
-extension Font {
-    static func customBibleTextSize(size: CGFloat) -> Font {
-        return .system(size: size, weight: .regular, design: .serif)
-    }
-}
-
 struct HomeView: View {
     @AppStorage("customFontSize") var customFontSize: Double = 17
     @AppStorage("customLineSize") var customLineSize: Double = 3
@@ -18,6 +12,7 @@ struct HomeView: View {
     @FocusState private var isTextEditorFocused: Bool
     @State private var buttonTrigger: Bool = false
     @State private var showingFontEditSheet: Bool = false
+    @State private var showingTextEditor: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -35,20 +30,27 @@ struct HomeView: View {
                     Section {
                         homeViewModel.randomBibleData.reduce(Text("")) { result, verse in
                             result
-                                + Text("\(verse.verse_start)").font(
-                                    .customBibleTextSize(size: customFontSize - 4)
+                                + Text("\(verse.verse_start)")
+                                .font(
+                                    .system(
+                                        size: customFontSize - 4, weight: .light, design: .serif)
                                 )
                                 .foregroundColor(.secondary).baselineOffset(3)
                                 + Text(" \(verse.verse_text) ")
                         }
                         .textSelection(.enabled)
-                        .font(.customBibleTextSize(size: customFontSize))
+                        .font(.system(size: customFontSize, weight: .regular, design: .serif))
                         .lineSpacing(customLineSize)
                     }
+                    .listRowSeparator(.hidden)
                 }
+                
                 Section {
                     TextEditor(text: $homeViewModel.entryText)
-                        .focused($isTextEditorFocused)
+                    .frame(minHeight: 75)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.gray.opacity(0.1))
+                        .cornerRadius(12)
                         .font(.system(size: 16, weight: .regular, design: .serif))
                         .overlay(alignment: .topLeading) {
                             if homeViewModel.entryText.isEmpty {
@@ -62,12 +64,14 @@ struct HomeView: View {
                             }
 
                         }
-
+                        .padding(.bottom, 100)
                 } header: {
-                    Text("Reflection")
-                        .font(.system(size: 13, weight: .regular, design: .serif))
+                        Text("Reflection")
+                            .font(.system(size: 13, weight: .regular, design: .serif))
                 }
+                .listRowSeparator(.hidden)
             }
+            .listStyle(PlainListStyle())
             .onTapGesture {
                 isTextEditorFocused = false
             }
@@ -86,6 +90,11 @@ struct HomeView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
+                        Button("", systemImage: "bookmark") {
+                            savePassage(homeViewModel: homeViewModel, modelContext: modelContext, dismiss: dismiss)
+
+                        }
+                        .tint(.gray)
                         Button("", systemImage: "textformat.size") {
                             showingFontEditSheet = true
                         }
@@ -145,6 +154,30 @@ struct HomeView: View {
             try modelContext.save()
             print("Entry saved successfully")
             homeViewModel.entryText = ""
+        } catch {
+            print("Error saving entry: \(error)")
+        }
+        dismiss()
+    }
+    func savePassage(homeViewModel: HomeViewModel, modelContext: ModelContext, dismiss: DismissAction)
+    {
+        guard let devotional = homeViewModel.randomDevotional else {
+            return
+        }
+
+        let saved = Saved(
+            id: UUID(),  // Generate a new UUID for the entry
+            book: devotional.book,
+            chapter: devotional.chapter,
+            start: devotional.start,
+            end: devotional.end
+        )
+
+        modelContext.insert(saved)
+        do {
+
+            try modelContext.save()
+            print("Entry saved successfully")
         } catch {
             print("Error saving entry: \(error)")
         }
