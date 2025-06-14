@@ -30,7 +30,7 @@ struct ContentView: View {
     }
 
     var body: some View {
-        NavTabView()
+        HomeView()
             .task {
                 do {
                     bibleService.loading = true

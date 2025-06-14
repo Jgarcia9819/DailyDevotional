@@ -7,6 +7,7 @@ class HomeViewModel: ObservableObject {
     @Published var randomDevotional: Devotional?
     @Published var bibleData: [BibleData] = []
     @Published var randomBibleData: [BibleData] = []
+    @Published var entireRandomBibleData: [BibleData] = []
     @Published var entryText: String = ""
     @Published var saved: Bool = false
 
@@ -80,6 +81,7 @@ class HomeViewModel: ObservableObject {
             }
             await MainActor.run {
                 self.randomBibleData = filtered
+                self.entireRandomBibleData = data
             }
         } catch {
             print("Error fetching Bible data: \(error)")
