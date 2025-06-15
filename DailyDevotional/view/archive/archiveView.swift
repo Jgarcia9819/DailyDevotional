@@ -11,7 +11,8 @@ struct ArchiveView: View {
   @ObservedObject var bibleService = BibleService.shared
   @Query(sort: \Entry.createdAt, order: .reverse) private var entries: [Entry]
   @Query(sort: \Saved.createdAt, order: .reverse) private var savedPassagesQuery: [Saved]
-  @State private var isDeleting: Bool = false
+  @State private var isDeletingEntry: Bool = false
+  @State private var isDeletingSavedPassage: Bool = false
   @State private var isShowingEditView: Bool = false
   @State private var isShowingReadView: Bool = false
   @State private var entryToEdit: Entry? = nil
@@ -55,7 +56,7 @@ struct ArchiveView: View {
               }
               .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 Button(role: .destructive) {
-                  isDeleting = true
+                  isDeletingEntry = true
                   entryToDelete = entry
                 } label: {
                   Label("Delete", systemImage: "trash")
@@ -89,7 +90,7 @@ struct ArchiveView: View {
               }
               .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                 Button(role: .destructive) {
-                  isDeleting = true
+                  isDeletingSavedPassage = true
                   savedToDelete = saved
                 } label: {
                   Label("Delete", systemImage: "trash")
@@ -109,7 +110,7 @@ struct ArchiveView: View {
         }
         .navigationTitle("Archive")
         .toolbar {
-          ToolbarItem(placement: .navigationBarTrailing) {
+          ToolbarItem {
             Picker("Selection", selection: $selectedArchiveTab) {
               Text("Entries").tag(pickerSelection.entries)
               Text("Saved").tag(pickerSelection.savedPassages)
@@ -132,25 +133,25 @@ struct ArchiveView: View {
         ReadView(savedPassage: savedToEdit)
       }
     }
-    .alert("Delete Entry? This cannot be undone.", isPresented: $isDeleting) {
+    .alert("Delete Entry? This cannot be undone.", isPresented: $isDeletingEntry) {
       Button("Delete", role: .destructive) {
         if let entryToDelete = entryToDelete {
           deleteEntry(entry: entryToDelete)
         }
-        isDeleting = false
+        isDeletingEntry = false
       }
       Button("Cancel", role: .cancel) {
-        isDeleting = false
+        isDeletingEntry = false
       }
     }
-    .alert("Delete Saved Passage? This cannot be undone.", isPresented: $isDeleting) {
+    .alert("Delete Saved Passage? This cannot be undone.", isPresented: $isDeletingSavedPassage) {
       Button("Delete", role: .destructive) {
         if let savedToDelete = savedToDelete {
           deleteSavedPassage(saved: savedToDelete)
         }
       }
       Button("Cancel", role: .cancel) {
-        isDeleting = false
+        isDeletingSavedPassage = false
       }
     }
   }
