@@ -27,20 +27,20 @@ struct HomeView: View {
         } else {
           Section {
             if homeViewModel.showingEntireChapter {
-              homeViewModel.entireRandomBibleData.reduce(Text("")) { result, verse in
-                result
-                  + Text("\(verse.verse_start)")
-                  .font(
-                    .system(
-                      size: customFontSize - 5, weight: .light, design: .serif)
-                  )
-                  .foregroundColor(.secondary).baselineOffset(3)
-                  + Text(" \(verse.verse_text) ")
-              }
-              .textSelection(.enabled)
-              .font(.system(size: customFontSize, weight: .regular, design: .serif))
-              .lineSpacing(customLineSize)
-              .padding(.horizontal, 4)
+                homeViewModel.entireRandomBibleData.reduce(Text("")) { result, verse in
+                  result
+                    + Text("\(verse.verse_start)")
+                    .font(
+                      .system(
+                        size: customFontSize - 5, weight: .light, design: .serif)
+                    )
+                    .foregroundColor(.secondary).baselineOffset(3)
+                    + Text(" \(verse.verse_text) ")
+                }
+                .textSelection(.enabled)
+                .font(.system(size: customFontSize, weight: .regular, design: .serif))
+                .lineSpacing(customLineSize)
+                .padding(.horizontal, 4)
             } else {
               homeViewModel.randomBibleData.reduce(Text("")) { result, verse in
                 result
@@ -111,16 +111,19 @@ struct HomeView: View {
           ? "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0)"
           : "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
       )
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItemGroup(placement: .bottomBar) {
           NavigationLink(destination: ArchiveView()) {
             Image(systemName: "archivebox")
           }
           .tint(colorScheme == .dark ? .white : .black)
-          Button("", systemImage: "textformat.size") {
-            homeViewModel.showingFontEditSheet = true
+
+          Button("", systemImage: "play.fill") {
+
           }
           .tint(colorScheme == .dark ? .white : .black)
+
           Button("", systemImage: homeViewModel.isPassageSaved ? "bookmark.fill" : "bookmark") {
             if homeViewModel.isPassageSaved {
               deleteSavedPassage(modelContext: modelContext)
@@ -137,6 +140,7 @@ struct HomeView: View {
           )
           .tint(colorScheme == .dark ? .white : .black)
           Spacer()
+
           Button(action: {
             homeViewModel.showingEntrySheet = true
           }) {
@@ -150,6 +154,11 @@ struct HomeView: View {
               Label("Settings", systemImage: "gearshape")
                 .tint(colorScheme == .dark ? .white : .black)
             }
+
+            Button("Font Settings", systemImage: "textformat.size") {
+              homeViewModel.showingFontEditSheet = true
+            }
+            .tint(colorScheme == .dark ? .white : .black)
           } label: {
             Image(systemName: "ellipsis.circle")
           }
