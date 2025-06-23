@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		B2BC02B72DED7A27003C4B2B /* BibleBites.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BibleBites.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2BC02B72DED7A27003C4B2B /* BibleBits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BibleBits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B2BC02C42DED7A28003C4B2B /* Exceptions for "DailyDevotional" folder in "BibleBites" target */ = {
+		B2BC02C42DED7A28003C4B2B /* Exceptions for "BibleBits" folder in "BibleBits" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B2BC02B62DED7A27003C4B2B /* BibleBites */;
+			target = B2BC02B62DED7A27003C4B2B /* BibleBits */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B2BC02B92DED7A27003C4B2B /* DailyDevotional */ = {
+		B2BC02B92DED7A27003C4B2B /* BibleBits */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B2BC02C42DED7A28003C4B2B /* Exceptions for "DailyDevotional" folder in "BibleBites" target */,
+				B2BC02C42DED7A28003C4B2B /* Exceptions for "BibleBits" folder in "BibleBits" target */,
 			);
-			path = DailyDevotional;
+			path = BibleBits;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +45,7 @@
 		B2BC02AE2DED7A27003C4B2B = {
 			isa = PBXGroup;
 			children = (
-				B2BC02B92DED7A27003C4B2B /* DailyDevotional */,
+				B2BC02B92DED7A27003C4B2B /* BibleBits */,
 				B2BC02B82DED7A27003C4B2B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,7 +53,7 @@
 		B2BC02B82DED7A27003C4B2B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B2BC02B72DED7A27003C4B2B /* BibleBites.app */,
+				B2BC02B72DED7A27003C4B2B /* BibleBits.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,9 +61,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B2BC02B62DED7A27003C4B2B /* BibleBites */ = {
+		B2BC02B62DED7A27003C4B2B /* BibleBits */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B2BC02C52DED7A28003C4B2B /* Build configuration list for PBXNativeTarget "BibleBites" */;
+			buildConfigurationList = B2BC02C52DED7A28003C4B2B /* Build configuration list for PBXNativeTarget "BibleBits" */;
 			buildPhases = (
 				B2BC02B32DED7A27003C4B2B /* Sources */,
 				B2BC02B42DED7A27003C4B2B /* Frameworks */,
@@ -74,13 +74,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B2BC02B92DED7A27003C4B2B /* DailyDevotional */,
+				B2BC02B92DED7A27003C4B2B /* BibleBits */,
 			);
-			name = BibleBites;
+			name = BibleBits;
 			packageProductDependencies = (
 			);
-			productName = DailyDevotional;
-			productReference = B2BC02B72DED7A27003C4B2B /* BibleBites.app */;
+			productName = BibleBits;
+			productReference = B2BC02B72DED7A27003C4B2B /* BibleBits.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -98,7 +98,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B2BC02B22DED7A27003C4B2B /* Build configuration list for PBXProject "BibleBites" */;
+			buildConfigurationList = B2BC02B22DED7A27003C4B2B /* Build configuration list for PBXProject "BibleBits" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -112,7 +112,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B2BC02B62DED7A27003C4B2B /* BibleBites */,
+				B2BC02B62DED7A27003C4B2B /* BibleBits */,
 			);
 		};
 /* End PBXProject section */
@@ -143,7 +143,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = DailyDevotional/DailyDevotional.entitlements;
+				CODE_SIGN_ENTITLEMENTS = BibleBits/BibleBits.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 68D8HPQG96;
@@ -151,8 +151,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = DailyDevotional/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Bible Bites";
+				INFOPLIST_FILE = BibleBits/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Bible Bits";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -177,7 +177,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = DailyDevotional/DailyDevotional.entitlements;
+				CODE_SIGN_ENTITLEMENTS = BibleBits/BibleBits.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 68D8HPQG96;
@@ -185,8 +185,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = DailyDevotional/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Bible Bites";
+				INFOPLIST_FILE = BibleBits/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Bible Bits";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -332,7 +332,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B2BC02B22DED7A27003C4B2B /* Build configuration list for PBXProject "BibleBites" */ = {
+		B2BC02B22DED7A27003C4B2B /* Build configuration list for PBXProject "BibleBits" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B2BC02C82DED7A28003C4B2B /* Debug */,
@@ -341,7 +341,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B2BC02C52DED7A28003C4B2B /* Build configuration list for PBXNativeTarget "BibleBites" */ = {
+		B2BC02C52DED7A28003C4B2B /* Build configuration list for PBXNativeTarget "BibleBits" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B2BC02C62DED7A28003C4B2B /* Debug */,
