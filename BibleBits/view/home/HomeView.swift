@@ -27,20 +27,20 @@ struct HomeView: View {
         } else {
           Section {
             if homeViewModel.showingEntireChapter {
-                homeViewModel.entireRandomBibleData.reduce(Text("")) { result, verse in
-                  result
-                    + Text("\(verse.verse_start)")
-                    .font(
-                      .system(
-                        size: customFontSize - 5, weight: .light, design: .serif)
-                    )
-                    .foregroundColor(.secondary).baselineOffset(3)
-                    + Text(" \(verse.verse_text) ")
-                }
-                .textSelection(.enabled)
-                .font(.system(size: customFontSize, weight: .regular, design: .serif))
-                .lineSpacing(customLineSize)
-                .padding(.horizontal, 4)
+              homeViewModel.entireRandomBibleData.reduce(Text("")) { result, verse in
+                result
+                  + Text("\(verse.verse_start)")
+                  .font(
+                    .system(
+                      size: customFontSize - 5, weight: .light, design: .serif)
+                  )
+                  .foregroundColor(.secondary).baselineOffset(3)
+                  + Text(" \(verse.verse_text) ")
+              }
+              .textSelection(.enabled)
+              .font(.system(size: customFontSize, weight: .regular, design: .serif))
+              .lineSpacing(customLineSize)
+              .padding(.horizontal, 4)
             } else {
               homeViewModel.randomBibleData.reduce(Text("")) { result, verse in
                 result
