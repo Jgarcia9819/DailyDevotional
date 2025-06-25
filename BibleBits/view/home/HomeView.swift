@@ -9,6 +9,7 @@ struct HomeView: View {
   @Environment(\.colorScheme) private var colorScheme
   @ObservedObject var homeViewModel = HomeViewModel.shared
   @ObservedObject var bibleService = BibleService.shared
+  @ObservedObject var bibleAudioService = BibleAudioService.shared
   @FocusState private var isTextEditorFocused: Bool
   @State private var buttonTrigger: Bool = false
 
@@ -23,7 +24,9 @@ struct HomeView: View {
         } else {
           Section {
             if homeViewModel.showingEntireChapter {
-              if homeViewModel.randomDevotional?.abbreviation == "PSA" || homeViewModel.randomDevotional?.abbreviation == "PRO" {
+              if homeViewModel.randomDevotional?.abbreviation == "PSA"
+                || homeViewModel.randomDevotional?.abbreviation == "PRO"
+              {
                 ForEach(homeViewModel.entireRandomBibleData, id: \.id) { verse in
                   Text("\(verse.verse_start)")
                     .font(
@@ -146,11 +149,37 @@ struct HomeView: View {
             Image(systemName: "archivebox")
           }
           .tint(colorScheme == .dark ? .white : .black)
+          if !bibleAudioService.isAudioPlaying {
+            Button(
+              "", systemImage: bibleAudioService.isAudioLoading ? "arrow.2.circlepath" : "play.fill"
+            ) {
+              Task {
+                do {
+                  let audioTimings = try await bibleAudioService.getAudioTimings(
+                    book: homeViewModel.randomDevotional?.abbreviation ?? "",
+                    chapter: homeViewModel.randomDevotional?.chapter ?? 0)
+                } catch {
+                  print("Error getting audio timings: \(error)")
+                }
+                await bibleAudioService.setupAudioPlayer(
+                  book: homeViewModel.randomDevotional?.abbreviation ?? "",
+                  chapter: homeViewModel.randomDevotional?.chapter ?? 0)
+                bibleAudioService.isAudioPlaying.toggle()
+              }
 
-          //Button("", systemImage: "play.fill") {
-
-          //}
-          //.tint(colorScheme == .dark ? .white : .black)
+            }
+            .tint(colorScheme == .dark ? .white : .black)
+          }
+          if bibleAudioService.isAudioPlaying {
+            Button("", systemImage: bibleAudioService.isAudioPlaying ? "pause.fill" : "play.fill") {
+              if bibleAudioService.isAudioPlaying && !bibleAudioService.isAudioPaused {
+                bibleAudioService.pauseAudio()
+              } else {
+                bibleAudioService.playAudio()
+              }
+            }
+            .tint(colorScheme == .dark ? .white : .black)
+          }
 
           Button("", systemImage: homeViewModel.isPassageSaved ? "bookmark.fill" : "bookmark") {
             if homeViewModel.isPassageSaved {

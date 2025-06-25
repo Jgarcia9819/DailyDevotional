@@ -29,13 +29,7 @@ struct BibleData: Codable, Identifiable {
   }
 }
 
-struct BibleAudioTimings: Codable {
-  let book_id: String
-  let chapter: Int
-  let verse_start: Int
-  let verse_start_alt: Int
-  let timestamp: [Int]
-}
+
 
 struct BibleDataResponse: Codable {
   let data: [BibleData]
@@ -44,12 +38,8 @@ struct BibleDataResponse: Codable {
 class BibleService: ObservableObject {
   let devotionalURL = "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/devotions"
   let bibleURL = "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/data/"
-  let bibleAudioTimingsURL =
-    "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/audio-timings/"
-  let bibleAudioURL = "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/audio/"
   @Published var devotionals: [Devotional] = []
   @Published var loading: Bool = false
-  @Published var audioTimings: [BibleAudioTimings] = []
   static let shared = BibleService()
 
   func getDevotionals() async throws {
@@ -96,22 +86,5 @@ class BibleService: ObservableObject {
     }
   }
 
-  func getAudioTimings(book: String, chapter: Int) async throws -> [BibleAudioTimings] {
-    let urlString = "\(bibleAudioTimingsURL)\(book)/\(chapter)"
-    guard let url = URL(string: urlString) else {
-      throw URLError(.badURL)
-    }
-    let (data, response) = try await URLSession.shared.data(from: url)
-
-    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-      throw URLError(.badServerResponse)
-    }
-    do {
-      let decoder = JSONDecoder()
-      let audioTimings = try decoder.decode([BibleAudioTimings].self, from: data)
-      return audioTimings
-    } catch {
-      throw error
-    }
-  }
+  
 }

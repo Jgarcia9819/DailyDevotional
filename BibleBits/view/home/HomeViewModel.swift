@@ -96,22 +96,5 @@ class HomeViewModel: ObservableObject {
     }
   }
 
-  func fetchAudioTimings() async {
-    let bibleService = BibleService.shared
-    guard let randomDevotional = randomDevotional else {
-      return
-    }
-    do {
-      let data = try await bibleService.getAudioTimings(
-        book: randomDevotional.abbreviation,
-        chapter: randomDevotional.chapter
-      )
-      await MainActor.run {
-        self.audioTimings = data
-      }
-    } catch {
-      print("Error fetching audio timings: \(error)")
-    }
-  }
 
 }
