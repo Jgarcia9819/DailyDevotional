@@ -39,10 +39,10 @@ struct ContentView: View {
           let homeViewModel = HomeViewModel.shared
 
           try await bibleService.getDevotionals()
-          try await homeViewModel.fetchTodayDevotional()
-          try await homeViewModel.fetchBibleData()
-          try await homeViewModel.fetchRandomDevotional()
-          try await homeViewModel.fetchRandomBibleData()
+          await homeViewModel.fetchTodayDevotional()
+          await homeViewModel.fetchBibleData()
+          await homeViewModel.fetchRandomDevotional()
+          await homeViewModel.fetchRandomBibleData()
         } catch {
           print("Error fetching devotionals: \(error.localizedDescription)")
         }

@@ -18,44 +18,72 @@ struct HomeView: View {
         if bibleService.loading {
           Section {
             ProgressView()
-              .progressViewStyle(
-                CircularProgressViewStyle(
-                  tint: colorScheme == .dark ? .white : .blue)
-              )
               .frame(maxWidth: .infinity, alignment: .center)
           }
         } else {
           Section {
             if homeViewModel.showingEntireChapter {
-              homeViewModel.entireRandomBibleData.reduce(Text("")) { result, verse in
-                result
-                  + Text("\(verse.verse_start)")
-                  .font(
-                    .system(
-                      size: customFontSize - 5, weight: .light, design: .serif)
-                  )
-                  .foregroundColor(.secondary).baselineOffset(3)
-                  + Text(" \(verse.verse_text) ")
+              if homeViewModel.randomDevotional?.abbreviation == "PSA" || homeViewModel.randomDevotional?.abbreviation == "PRO" {
+                ForEach(homeViewModel.entireRandomBibleData, id: \.id) { verse in
+                  Text("\(verse.verse_start)")
+                    .font(
+                      .system(
+                        size: customFontSize - 5, weight: .light, design: .serif)
+                    )
+                    .foregroundColor(.secondary).baselineOffset(3)
+                    + Text(" \(verse.verse_text) ")
+                }
+                .textSelection(.enabled)
+                .font(.system(size: customFontSize, weight: .regular, design: .serif))
+                .lineSpacing(customLineSize)
+                .padding(.horizontal, 4)
+              } else {
+                homeViewModel.entireRandomBibleData.reduce(Text("")) { result, verse in
+                  result
+                    + Text("\(verse.verse_start)")
+                    .font(
+                      .system(
+                        size: customFontSize - 5, weight: .light, design: .serif)
+                    )
+                    .foregroundColor(.secondary).baselineOffset(3)
+                    + Text(" \(verse.verse_text) ")
+                }
+                .textSelection(.enabled)
+                .font(.system(size: customFontSize, weight: .regular, design: .serif))
+                .lineSpacing(customLineSize)
+                .padding(.horizontal, 4)
               }
-              .textSelection(.enabled)
-              .font(.system(size: customFontSize, weight: .regular, design: .serif))
-              .lineSpacing(customLineSize)
-              .padding(.horizontal, 4)
             } else {
-              homeViewModel.randomBibleData.reduce(Text("")) { result, verse in
-                result
-                  + Text("\(verse.verse_start)")
-                  .font(
-                    .system(
-                      size: customFontSize - 5, weight: .light, design: .serif)
-                  )
-                  .foregroundColor(.secondary).baselineOffset(3)
-                  + Text(" \(verse.verse_text) ")
+              if homeViewModel.randomDevotional?.abbreviation == "PSA" {
+                ForEach(homeViewModel.randomBibleData, id: \.id) { verse in
+                  Text("\(verse.verse_start)")
+                    .font(
+                      .system(
+                        size: customFontSize - 5, weight: .light, design: .serif)
+                    )
+                    .foregroundColor(.secondary).baselineOffset(3)
+                    + Text(" \(verse.verse_text) ")
+                }
+                .textSelection(.enabled)
+                .font(.system(size: customFontSize, weight: .regular, design: .serif))
+                .lineSpacing(customLineSize)
+                .padding(.horizontal, 4)
+              } else {
+                homeViewModel.randomBibleData.reduce(Text("")) { result, verse in
+                  result
+                    + Text("\(verse.verse_start)")
+                    .font(
+                      .system(
+                        size: customFontSize - 5, weight: .light, design: .serif)
+                    )
+                    .foregroundColor(.secondary).baselineOffset(3)
+                    + Text(" \(verse.verse_text) ")
+                }
+                .textSelection(.enabled)
+                .font(.system(size: customFontSize, weight: .regular, design: .serif))
+                .lineSpacing(customLineSize)
+                .padding(.horizontal, 4)
               }
-              .textSelection(.enabled)
-              .font(.system(size: customFontSize, weight: .regular, design: .serif))
-              .lineSpacing(customLineSize)
-              .padding(.horizontal, 4)
             }
             Button("Show Full Chapter") {
               homeViewModel.showingEntireChapter.toggle()
@@ -119,10 +147,10 @@ struct HomeView: View {
           }
           .tint(colorScheme == .dark ? .white : .black)
 
-          Button("", systemImage: "play.fill") {
+          //Button("", systemImage: "play.fill") {
 
-          }
-          .tint(colorScheme == .dark ? .white : .black)
+          //}
+          //.tint(colorScheme == .dark ? .white : .black)
 
           Button("", systemImage: homeViewModel.isPassageSaved ? "bookmark.fill" : "bookmark") {
             if homeViewModel.isPassageSaved {
@@ -160,7 +188,7 @@ struct HomeView: View {
             }
             .tint(colorScheme == .dark ? .white : .black)
           } label: {
-            Image(systemName: "ellipsis.circle")
+            Image(systemName: "ellipsis")
           }
           .tint(colorScheme == .dark ? .white : .black)
         }

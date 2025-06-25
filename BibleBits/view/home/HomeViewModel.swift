@@ -17,6 +17,7 @@ class HomeViewModel: ObservableObject {
   @Published var showingEntireChapter: Bool = false
   @Published var showingEntrySheet: Bool = false
   @Published var isRefreshing: Bool = false
+  @Published var audioTimings: [BibleAudioTimings] = []
 
   func fetchTodayDevotional() async {
     let bibleService = BibleService.shared
@@ -92,6 +93,24 @@ class HomeViewModel: ObservableObject {
       }
     } catch {
       print("Error fetching Bible data: \(error)")
+    }
+  }
+
+  func fetchAudioTimings() async {
+    let bibleService = BibleService.shared
+    guard let randomDevotional = randomDevotional else {
+      return
+    }
+    do {
+      let data = try await bibleService.getAudioTimings(
+        book: randomDevotional.abbreviation,
+        chapter: randomDevotional.chapter
+      )
+      await MainActor.run {
+        self.audioTimings = data
+      }
+    } catch {
+      print("Error fetching audio timings: \(error)")
     }
   }
 

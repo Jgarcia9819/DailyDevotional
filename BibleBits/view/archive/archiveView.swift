@@ -23,7 +23,7 @@ struct ArchiveView: View {
 
   var body: some View {
     NavigationStack {
-      if entries.isEmpty {
+      if entries.isEmpty && savedPassagesQuery.isEmpty {
         List {
           Section {
             Text("No saved items yet")
@@ -37,40 +37,48 @@ struct ArchiveView: View {
       } else {
         List {
           if selectedArchiveTab == pickerSelection.entries {
-            ForEach(entries, id: \.id) { entry in
+            if entries.isEmpty {
               Section {
-                Text(entry.content)
-                  .padding(.bottom, 2)
-                  .font(.system(size: 16, weight: .regular, design: .serif))
-
-              } header: {
-                HStack {
-                  Text(
-                    "\(entry.book) \(entry.chapter):\(entry.start)-\(entry.end)"
-                  )
-                  Spacer()
-                  Text(entry.createdAt, style: .date)
-                    .foregroundColor(.secondary)
-                    .font(.system(size: 13, weight: .regular, design: .serif))
-                }
+                Text("No entries yet")
+                  .font(.system(size: 16, weight: .light, design: .serif))
+                  .foregroundColor(.gray)
               }
-              .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                Button(role: .destructive) {
-                  isDeletingEntry = true
-                  entryToDelete = entry
-                } label: {
-                  Label("Delete", systemImage: "trash")
-                }
-                .tint(.red)
-                Button {
-                  isShowingEditView = true
-                  DispatchQueue.main.async {
-                    entryToEdit = entry
-                  }
-                } label: {
-                  Label("Edit", systemImage: "pencil")
-                }
+            } else {
+              ForEach(entries, id: \.id) { entry in
+                Section {
+                  Text(entry.content)
+                    .padding(.bottom, 2)
+                    .font(.system(size: 16, weight: .regular, design: .serif))
 
+                } header: {
+                  HStack {
+                    Text(
+                      "\(entry.book) \(entry.chapter):\(entry.start)-\(entry.end)"
+                    )
+                    Spacer()
+                    Text(entry.createdAt, style: .date)
+                      .foregroundColor(.secondary)
+                      .font(.system(size: 13, weight: .regular, design: .serif))
+                  }
+                }
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                  Button(role: .destructive) {
+                    isDeletingEntry = true
+                    entryToDelete = entry
+                  } label: {
+                    Label("Delete", systemImage: "trash")
+                  }
+                  .tint(.red)
+                  Button {
+                    isShowingEditView = true
+                    DispatchQueue.main.async {
+                      entryToEdit = entry
+                    }
+                  } label: {
+                    Label("Edit", systemImage: "pencil")
+                  }
+
+                }
               }
             }
           }
