@@ -75,6 +75,9 @@ struct EntrySheetView: View {
     guard let devotional = homeViewModel.randomDevotional else {
       return
     }
+    guard let start = devotional.start, let end = devotional.end else {
+      return
+    }
 
     let entry = Entry(
       id: UUID(),  // Generate a new UUID for the entry
@@ -84,8 +87,8 @@ struct EntrySheetView: View {
       saved: true,
       book: devotional.book,
       chapter: devotional.chapter,
-      start: devotional.start,
-      end: devotional.end)
+      start: start,
+      end: end)
     print(devotional.book, devotional.chapter)
 
     modelContext.insert(entry)

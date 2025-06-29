@@ -16,8 +16,10 @@ class HomeViewModel: ObservableObject {
   @Published var savedPassage: Saved?
   @Published var showingEntireChapter: Bool = false
   @Published var showingEntrySheet: Bool = false
+  @Published var showingInfoSheet: Bool = false
   @Published var isRefreshing: Bool = false
   @Published var audioTimings: [BibleAudioTimings] = []
+  @Published var bookInfo: BookInfo?
 
   func fetchTodayDevotional() async {
     let bibleService = BibleService.shared
@@ -83,9 +85,13 @@ class HomeViewModel: ObservableObject {
         chapter: randomDevotional.chapter
       )
       let filtered = data.filter { verse in
-        let start = randomDevotional.start
-        let end = randomDevotional.end
-        return verse.verse_start >= start && verse.verse_start <= end
+        if let start = randomDevotional.start, let end = randomDevotional.end {
+          return verse.verse_start >= start && verse.verse_start <= end
+        }
+        if let start = randomDevotional.start {
+          return verse.verse_start == start
+        }
+        return false
       }
       await MainActor.run {
         self.randomBibleData = filtered
@@ -96,5 +102,16 @@ class HomeViewModel: ObservableObject {
     }
   }
 
-
+  func fetchBookInfo() async {
+    let bibleService = BibleService.shared
+    do {
+      let bookInfo = try await bibleService.getBookInfo(book: randomDevotional?.abbreviation ?? "")
+      await MainActor.run {
+        self.bookInfo = bookInfo
+      }
+    } catch {
+      print("Error fetching book info: \(error)")
+    }
+  }
+  
 }

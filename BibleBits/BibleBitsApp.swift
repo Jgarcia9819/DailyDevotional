@@ -13,7 +13,7 @@ import UIKit
 struct BibleBitsApp: App {
   @Environment(\.colorScheme) private var colorScheme
   var sharedModelContainer: ModelContainer = {
-    let schema = Schema([Entry.self, Saved.self])
+    let schema = Schema([Entry.self, Saved.self, User.self])
     let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
     do {

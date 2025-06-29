@@ -2,11 +2,11 @@ import AVFoundation
 import Foundation
 
 struct BibleAudioTimings: Codable {
-  let book_id: String
-  let chapter: Int
-  let verse_start: Int
-  let verse_start_alt: Int
-  let timestamp: [Int]
+  let book: String
+  let chapter: String
+  let verse_start: String
+  let verse_start_alt: String
+  let timestamp: Double
 }
 
 class BibleAudioService: ObservableObject {
@@ -34,10 +34,6 @@ class BibleAudioService: ObservableObject {
       throw URLError(.badServerResponse)
     }
     do {
-      // Print the raw JSON for debugging
-      if let jsonString = String(data: data, encoding: .utf8) {
-        print("Raw JSON: \(jsonString)")
-      }
 
       let decoder = JSONDecoder()
       // Based on the example response, we need to decode {"data": [...]}
@@ -54,33 +50,91 @@ class BibleAudioService: ObservableObject {
     }
   }
 
-  func setupAudioPlayer(book: String, chapter: Int) async {
+  func setupAudioPlayer(book: String, chapter: Int, verseStart: Int = 1, verseEnd: Int? = nil) async
+  {
     do {
-      isAudioLoading = true
+      try AVAudioSession.sharedInstance().setCategory(.playback)
+      try AVAudioSession.sharedInstance().setActive(true)
+      await MainActor.run {
+        self.isAudioLoading = true
+        self.isAudioPaused = false
+      }
+
+      // Get audio timings
+      let timings = try await getAudioTimings(book: book, chapter: chapter)
+
+      // Find start timestamp
+      let startTimestamp =
+        timings.first(where: { Int($0.verse_start) == verseStart })?.timestamp ?? 0
+
+      // Find end timestamp
+      let endTimestamp: Double?
+      if let verseEnd = verseEnd, verseEnd > verseStart {
+        // Multi-verse range: find the start of the verse after the end verse
+        endTimestamp = timings.first(where: { Int($0.verse_start) == verseEnd + 1 })?.timestamp
+      } else {
+        // Single verse: find the start of the next verse after the start verse
+        endTimestamp = timings.first(where: { Int($0.verse_start) == verseStart + 1 })?.timestamp
+      }
+
+      // Setup audio player
       let audioURL = "\(bibleAudioURL)?book=\(book)&chapter=\(chapter)&version=ENGESV"
       guard let url = URL(string: audioURL) else {
         throw URLError(.badURL)
       }
+
       let playerItem = AVPlayerItem(url: url)
       await MainActor.run {
         self.player = AVPlayer(playerItem: playerItem)
+
+        // Set start time
+        let startTime = CMTime(seconds: startTimestamp, preferredTimescale: 1000)
+        player?.seek(to: startTime)
+
         player?.play()
+        self.isAudioPlaying = true
+        self.isAudioPaused = false
+
+        // If end timestamp exists, set a timer to stop playback
+        if let endTimestamp = endTimestamp {
+          let duration = endTimestamp - startTimestamp
+          DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [weak self] in
+            Task { @MainActor in
+              self?.resetAudio()
+            }
+          }
+        }
+
       }
 
-      isAudioLoading = false
+      await MainActor.run { self.isAudioLoading = false }
     } catch {
       print("Error setting up audio player: \(error)")
+      await MainActor.run {
+        self.isAudioLoading = false
+        self.isAudioPlaying = false
+        self.isAudioPaused = false
+      }
     }
   }
+
   func pauseAudio() {
     player?.pause()
     isAudioPlaying = false
     isAudioPaused = true
   }
+
   func playAudio() {
     player?.play()
     isAudioPlaying = true
     isAudioPaused = false
   }
 
+  func resetAudio() {
+    player?.pause()
+    player = nil
+    isAudioPlaying = false
+    isAudioPaused = false
+    isAudioLoading = false
+  }
 }

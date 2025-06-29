@@ -57,7 +57,9 @@ struct HomeView: View {
                 .padding(.horizontal, 4)
               }
             } else {
-              if homeViewModel.randomDevotional?.abbreviation == "PSA" {
+              if homeViewModel.randomDevotional?.abbreviation == "PSA"
+                || homeViewModel.randomDevotional?.abbreviation == "PRO"
+              {
                 ForEach(homeViewModel.randomBibleData, id: \.id) { verse in
                   Text("\(verse.verse_start)")
                     .font(
@@ -107,6 +109,8 @@ struct HomeView: View {
           homeViewModel.isRefreshing = true
           return
         }
+        // Reset audio state immediately when refresh is triggered
+        bibleAudioService.resetAudio()
         await performRefresh()
       }
       .alert(
@@ -117,12 +121,16 @@ struct HomeView: View {
           saveEntry(homeViewModel: homeViewModel, modelContext: modelContext, dismiss: dismiss)
           homeViewModel.isRefreshing = false
           Task {
+            // Reset audio state here too
+            bibleAudioService.resetAudio()
             await performRefresh()
           }
         }
         Button("Discard", role: .destructive) {
           homeViewModel.isRefreshing = false
           Task {
+            // Reset audio state here too
+            bibleAudioService.resetAudio()
             await performRefresh()
           }
         }
@@ -137,91 +145,204 @@ struct HomeView: View {
           .presentationDetents([.height(200)])
           .presentationDragIndicator(.visible)
       }
-      .navigationTitle(
-        homeViewModel.showingEntireChapter
-          ? "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0)"
-          : "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
-      )
+      .sheet(isPresented: $homeViewModel.showingInfoSheet) {
+        InfoView()
+          .presentationDetents([.medium, .large])
+          .presentationDragIndicator(.visible)
+      }
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
-        ToolbarItemGroup(placement: .bottomBar) {
-          NavigationLink(destination: ArchiveView()) {
-            Image(systemName: "archivebox")
-          }
-          .tint(colorScheme == .dark ? .white : .black)
-          if !bibleAudioService.isAudioPlaying {
-            Button(
-              "", systemImage: bibleAudioService.isAudioLoading ? "arrow.2.circlepath" : "play.fill"
-            ) {
-              Task {
-                do {
-                  let audioTimings = try await bibleAudioService.getAudioTimings(
-                    book: homeViewModel.randomDevotional?.abbreviation ?? "",
-                    chapter: homeViewModel.randomDevotional?.chapter ?? 0)
-                } catch {
-                  print("Error getting audio timings: \(error)")
-                }
-                await bibleAudioService.setupAudioPlayer(
-                  book: homeViewModel.randomDevotional?.abbreviation ?? "",
-                  chapter: homeViewModel.randomDevotional?.chapter ?? 0)
-                bibleAudioService.isAudioPlaying.toggle()
-              }
-
-            }
-            .tint(colorScheme == .dark ? .white : .black)
-          }
-          if bibleAudioService.isAudioPlaying {
-            Button("", systemImage: bibleAudioService.isAudioPlaying ? "pause.fill" : "play.fill") {
-              if bibleAudioService.isAudioPlaying && !bibleAudioService.isAudioPaused {
-                bibleAudioService.pauseAudio()
-              } else {
-                bibleAudioService.playAudio()
-              }
-            }
-            .tint(colorScheme == .dark ? .white : .black)
-          }
-
-          Button("", systemImage: homeViewModel.isPassageSaved ? "bookmark.fill" : "bookmark") {
-            if homeViewModel.isPassageSaved {
-              deleteSavedPassage(modelContext: modelContext)
-            } else {
-              savePassage(
-                homeViewModel: homeViewModel, modelContext: modelContext, dismiss: dismiss)
-            }
-            homeViewModel.isPassageSaved.toggle()
-            buttonTrigger.toggle()
-          }
-          .sensoryFeedback(
-            .success,
-            trigger: buttonTrigger
-          )
-          .tint(colorScheme == .dark ? .white : .black)
-          Spacer()
-
+        ToolbarItem(placement: .navigationBarLeading) {
           Button(action: {
-            homeViewModel.showingEntrySheet = true
-          }) {
-            Image(systemName: "square.and.pencil")
-          }
-          .tint(colorScheme == .dark ? .white : .black)
-        }
-        ToolbarItem(placement: .navigationBarTrailing) {
-          Menu {
-            NavigationLink(destination: SettingsView()) {
-              Label("Settings", systemImage: "gearshape")
-                .tint(colorScheme == .dark ? .white : .black)
-            }
 
-            Button("Font Settings", systemImage: "textformat.size") {
-              homeViewModel.showingFontEditSheet = true
+          }) {
+            Text(
+              homeViewModel.randomDevotional?.end == nil
+                ? "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)"
+                : homeViewModel.showingEntireChapter
+                  ? "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0)"
+                  : "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
+            )
+            .font(.system(size: 20, weight: .regular, design: .serif))
+            .tint(colorScheme == .dark ? .white : .black)
+
+          }
+          .allowsHitTesting(false)
+        }
+        #if os(iOS)
+          if #available(iOS 26.0, *) {
+            ToolbarItemGroup(placement: .bottomBar) {
+              NavigationLink(destination: ArchiveView()) {
+                Image(systemName: "archivebox")
+              }
+              .tint(colorScheme == .dark ? .white : .black)
+
+              Button("", systemImage: homeViewModel.isPassageSaved ? "bookmark.fill" : "bookmark") {
+                if homeViewModel.isPassageSaved {
+                  deleteSavedPassage(modelContext: modelContext)
+                } else {
+                  savePassage(
+                    homeViewModel: homeViewModel, modelContext: modelContext, dismiss: dismiss)
+                }
+                homeViewModel.isPassageSaved.toggle()
+                buttonTrigger.toggle()
+              }
+              .sensoryFeedback(
+                .success,
+                trigger: buttonTrigger
+              )
+              .tint(colorScheme == .dark ? .white : .black)
+
+              Button(
+                "",
+                systemImage: bibleAudioService.isAudioLoading
+                  ? "arrow.2.circlepath"
+                  : (bibleAudioService.isAudioPlaying ? "pause.fill" : "play.fill")
+              ) {
+                Task {
+                  if bibleAudioService.isAudioPlaying {
+                    bibleAudioService.pauseAudio()
+                  } else if bibleAudioService.isAudioPaused {
+                    bibleAudioService.playAudio()
+                  } else {
+                    await bibleAudioService.setupAudioPlayer(
+                      book: homeViewModel.randomDevotional?.abbreviation ?? "",
+                      chapter: homeViewModel.randomDevotional?.chapter ?? 0,
+                      verseStart: homeViewModel.randomDevotional?.start ?? 1,
+                      verseEnd: homeViewModel.randomDevotional?.end)
+                    bibleAudioService.isAudioPlaying = true
+                  }
+                }
+              }
+              .tint(colorScheme == .dark ? .white : .black)
+              .disabled(bibleAudioService.isAudioLoading)
+
+              Spacer()
+
+              Button(action: {
+                homeViewModel.showingEntrySheet = true
+              }) {
+                Image(systemName: "square.and.pencil")
+              }
+              .tint(colorScheme == .dark ? .white : .black)
+            }
+          }
+        #endif
+        ToolbarItem(placement: .navigationBarTrailing) {
+          HStack {
+            Button(action: {
+              homeViewModel.showingInfoSheet = true
+            }) {
+              Label("Info", systemImage: "info.circle")
             }
             .tint(colorScheme == .dark ? .white : .black)
-          } label: {
-            Image(systemName: "ellipsis")
+            .padding(.horizontal, 10)
+
+            Menu {
+              NavigationLink(destination: SettingsView()) {
+                Label("Settings", systemImage: "gearshape")
+                  .tint(colorScheme == .dark ? .white : .black)
+              }
+
+              Button("Font Settings", systemImage: "textformat.size") {
+                homeViewModel.showingFontEditSheet = true
+              }
+              .tint(colorScheme == .dark ? .white : .black)
+              .padding(.horizontal, 10)
+            } label: {
+              Image(systemName: "ellipsis")
+            }
+            .tint(colorScheme == .dark ? .white : .black)
           }
-          .tint(colorScheme == .dark ? .white : .black)
         }
       }
+
+      .overlay(alignment: .bottom) {
+        #if os(iOS)
+          if #unavailable(iOS 26.0) {
+            HStack {
+              HStack(spacing: 0) {
+                NavigationLink(destination: ArchiveView()) {
+                  Image(systemName: "archivebox")
+                    .font(.system(size: 20))
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .frame(width: 50, height: 50)
+                }
+                .tint(colorScheme == .dark ? .white : .black)
+                .padding(.horizontal, 10)
+
+                Button("", systemImage: homeViewModel.isPassageSaved ? "bookmark.fill" : "bookmark")
+                {
+                  if homeViewModel.isPassageSaved {
+                    deleteSavedPassage(modelContext: modelContext)
+                  } else {
+                    savePassage(
+                      homeViewModel: homeViewModel, modelContext: modelContext, dismiss: dismiss)
+                  }
+                  homeViewModel.isPassageSaved.toggle()
+                  buttonTrigger.toggle()
+                }
+                .font(.system(size: 20))
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .frame(width: 50, height: 50)
+                .sensoryFeedback(
+                  .success,
+                  trigger: buttonTrigger
+                )
+                .tint(colorScheme == .dark ? .white : .black)
+                .padding(.horizontal, 10)
+                Button(
+                  "",
+                  systemImage: bibleAudioService.isAudioLoading
+                    ? "arrow.2.circlepath"
+                    : (bibleAudioService.isAudioPlaying ? "pause.fill" : "play.fill")
+                ) {
+                  Task {
+                    if bibleAudioService.isAudioPlaying {
+                      bibleAudioService.pauseAudio()
+                    } else if bibleAudioService.isAudioPaused {
+                      bibleAudioService.playAudio()
+                    } else {
+                      await bibleAudioService.setupAudioPlayer(
+                        book: homeViewModel.randomDevotional?.abbreviation ?? "",
+                        chapter: homeViewModel.randomDevotional?.chapter ?? 0,
+                        verseStart: homeViewModel.randomDevotional?.start ?? 1,
+                        verseEnd: homeViewModel.randomDevotional?.end)
+                      bibleAudioService.isAudioPlaying = true
+                    }
+                  }
+                }
+                .font(.system(size: 20))
+                .foregroundColor(colorScheme == .dark ? .white : .black)
+                .frame(width: 50, height: 50)
+                .tint(colorScheme == .dark ? .white : .black)
+                .disabled(bibleAudioService.isAudioLoading)
+              }
+              .background(Color(UIColor.systemGray6))
+              .clipShape(Capsule())
+              .padding(.horizontal, 10)
+
+              Spacer()
+              HStack {
+                Button(action: {
+                  homeViewModel.showingEntrySheet = true
+                }) {
+                  Image(systemName: "square.and.pencil")
+                    .font(.system(size: 20))
+                    .frame(width: 50, height: 50)
+                }
+                .tint(colorScheme == .dark ? .white : .black)
+              }
+              .background(Color(UIColor.systemGray6))
+              .clipShape(Capsule())
+              .padding(.horizontal, 10)
+            }
+          }
+        #endif
+      }
+    }
+    .onAppear {
+      checkIfPassageIsSaved(modelContext: modelContext)
     }
   }
 
@@ -231,7 +352,9 @@ struct HomeView: View {
     guard let devotional = homeViewModel.randomDevotional else {
       return
     }
-
+    guard let start = devotional.start, let end = devotional.end else {
+      return
+    }
     let entry = Entry(
       id: UUID(),  // Generate a new UUID for the entry
       devoID: devotional.id,
@@ -240,8 +363,8 @@ struct HomeView: View {
       saved: true,
       book: devotional.book,
       chapter: devotional.chapter,
-      start: devotional.start,
-      end: devotional.end)
+      start: start,
+      end: end)
     print(devotional.book, devotional.chapter)
 
     modelContext.insert(entry)
@@ -261,14 +384,16 @@ struct HomeView: View {
     guard let devotional = homeViewModel.randomDevotional else {
       return
     }
-
+    guard let start = devotional.start, let end = devotional.end else {
+      return
+    }
     let saved = Saved(
       id: UUID(),  // Generate a new UUID for the entry
       devoID: devotional.id,
       book: devotional.book,
       chapter: devotional.chapter,
-      start: devotional.start,
-      end: devotional.end,
+      start: start,
+      end: end,
       createdAt: Date()
     )
     homeViewModel.savedPassage = saved
@@ -301,8 +426,43 @@ struct HomeView: View {
     homeViewModel.isPassageSaved = false
     homeViewModel.savedPassage = nil
     homeViewModel.showingEntireChapter = false
+
+    // Reset audio state
+    bibleAudioService.resetAudio()
+
     await homeViewModel.fetchRandomDevotional()
     await homeViewModel.fetchRandomBibleData()
+    await homeViewModel.fetchBookInfo()
+    checkIfPassageIsSaved(modelContext: modelContext)
+  }
+
+  func checkIfPassageIsSaved(modelContext: ModelContext) {
+    guard let devotional = homeViewModel.randomDevotional else {
+      homeViewModel.isPassageSaved = false
+      return
+    }
+
+    let devotionalId = devotional.id
+    let predicate = #Predicate<Saved> { savedPassage in
+      savedPassage.devoID == devotionalId
+    }
+
+    let descriptor = FetchDescriptor<Saved>(predicate: predicate)
+
+    do {
+      let savedPassages = try modelContext.fetch(descriptor)
+      if let matchedPassage = savedPassages.first {
+        homeViewModel.isPassageSaved = true
+        homeViewModel.savedPassage = matchedPassage
+      } else {
+        homeViewModel.isPassageSaved = false
+        homeViewModel.savedPassage = nil
+      }
+    } catch {
+      print("Error fetching saved passages: \(error)")
+      homeViewModel.isPassageSaved = false
+      homeViewModel.savedPassage = nil
+    }
   }
 
 }
