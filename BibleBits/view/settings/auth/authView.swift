@@ -43,20 +43,37 @@ struct AuthView: View {
   }
 
   private func saveUser(with userCredential: ASAuthorizationAppleIDCredential) {
-    let user = User(
-      id: userCredential.user, name: userCredential.fullName?.givenName, email: userCredential.email
+    // Check if user already exists
+
+    let userId = userCredential.user
+    let fetchDescriptor = FetchDescriptor<User>(
+      predicate: #Predicate<User> { user in
+        (user.id ?? "") == userId
+      }
     )
-    user.createdAt = Date.now
-    print("User saved: \(user)")
-    modelContext.insert(user)
+
     do {
-      try modelContext.save()
+      let existingUsers = try modelContext.fetch(fetchDescriptor)
+
+      if existingUsers.isEmpty {
+        // User doesn't exist, create new one
+        let user = User(
+          id: userCredential.user,
+          name: userCredential.fullName?.givenName,
+          email: userCredential.email
+        )
+        print("Creating new user: \(user)")
+        modelContext.insert(user)
+        try modelContext.save()
+      }
+
       // Store user identifier in UserDefaults for session management
       UserDefaults.standard.set(userCredential.user, forKey: "currentUserIdentifier")
       UserDefaults.standard.set(true, forKey: "isUserLoggedIn")
       isUserLoggedIn = true
+
     } catch {
-      print("Error saving user: \(error)")
+      print("Error handling user: \(error)")
     }
   }
 

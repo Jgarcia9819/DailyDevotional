@@ -19,17 +19,21 @@ struct SettingsView: View {
             .font(.system(size: 13, weight: .regular, design: .serif))
         }
         Section {
-          if isUserLoggedIn {
-            LogOutView()
-          } else {
-            AuthView()
-              .frame(width: 200, height: 44)
-              .cornerRadius(10)
+          Button("Leave a Review") {
+            requestReview()
           }
         }
         Section {
-          Button("Leave a Review") {
-            requestReview()
+          HStack {
+            Spacer()
+            if isUserLoggedIn {
+              LogOutView()
+            } else {
+              AuthView()
+                .frame(width: 200, height: 44)
+                .cornerRadius(10)
+            }
+            Spacer()
           }
         }
       }

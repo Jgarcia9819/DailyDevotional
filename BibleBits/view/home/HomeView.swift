@@ -102,8 +102,8 @@ struct HomeView: View {
           }
           .listRowSeparator(.hidden)
         }
+        .listStyle(PlainListStyle())
       }
-      .listStyle(PlainListStyle())
       .refreshable {
         if !homeViewModel.entryText.isEmpty {
           homeViewModel.isRefreshing = true
@@ -236,7 +236,7 @@ struct HomeView: View {
               Label("Info", systemImage: "info.circle")
             }
             .tint(colorScheme == .dark ? .white : .black)
-            .padding(.horizontal, 10)
+            .padding(.horizontal, 5)
 
             Menu {
               NavigationLink(destination: SettingsView()) {
@@ -253,6 +253,7 @@ struct HomeView: View {
               Image(systemName: "ellipsis")
             }
             .tint(colorScheme == .dark ? .white : .black)
+            .padding(.horizontal, 5)
           }
         }
       }
