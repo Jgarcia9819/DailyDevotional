@@ -23,19 +23,19 @@ struct SettingsView: View {
             requestReview()
           }
         }
-        Section {
-          HStack {
-            Spacer()
-            if isUserLoggedIn {
-              LogOutView()
-            } else {
-              AuthView()
-                .frame(width: 200, height: 44)
-                .cornerRadius(10)
-            }
-            Spacer()
-          }
-        }
+        //Section {
+          //HStack {
+            //Spacer()
+            //if isUserLoggedIn {
+              //LogOutView()
+            //} else {
+              //AuthView()
+                //.frame(width: 200, height: 44)
+                //.cornerRadius(10)
+            //}
+            //Spacer()
+          //}
+        //}
       }
       .navigationTitle("Settings")
     }
