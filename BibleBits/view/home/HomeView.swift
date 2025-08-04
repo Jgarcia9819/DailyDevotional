@@ -231,14 +231,6 @@ struct HomeView: View {
         ToolbarItem(placement: .navigationBarTrailing) {
           HStack {
 
-            // Button(action: {
-            //   homeViewModel.showingInfoSheet = true
-            // }) {
-            //   Label("Info", systemImage: "info.circle")
-            // }
-            // .tint(colorScheme == .dark ? .white : .black)
-            // .padding(.horizontal, 5)
-
             Menu {
               NavigationLink(destination: SettingsView()) {
                 Label("Settings", systemImage: "gearshape")
