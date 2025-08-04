@@ -102,8 +102,9 @@ struct HomeView: View {
           }
           .listRowSeparator(.hidden)
         }
-        .listStyle(PlainListStyle())
+        
       }
+      .listStyle(PlainListStyle())
       .refreshable {
         if !homeViewModel.entryText.isEmpty {
           homeViewModel.isRefreshing = true
