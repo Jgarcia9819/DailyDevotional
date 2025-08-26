@@ -170,65 +170,7 @@ struct HomeView: View {
           }
           .allowsHitTesting(false)
         }
-        #if os(iOS)
-          if #available(iOS 26.0, *) {
-            ToolbarItemGroup(placement: .bottomBar) {
-              NavigationLink(destination: ArchiveView()) {
-                Image(systemName: "archivebox")
-              }
-              .tint(colorScheme == .dark ? .white : .black)
-
-              Button("", systemImage: homeViewModel.isPassageSaved ? "bookmark.fill" : "bookmark") {
-                if homeViewModel.isPassageSaved {
-                  deleteSavedPassage(modelContext: modelContext)
-                } else {
-                  savePassage(
-                    homeViewModel: homeViewModel, modelContext: modelContext, dismiss: dismiss)
-                }
-                homeViewModel.isPassageSaved.toggle()
-                buttonTrigger.toggle()
-              }
-              .sensoryFeedback(
-                .success,
-                trigger: buttonTrigger
-              )
-              .tint(colorScheme == .dark ? .white : .black)
-
-              Button(
-                "",
-                systemImage: bibleAudioService.isAudioLoading
-                  ? "arrow.2.circlepath"
-                  : (bibleAudioService.isAudioPlaying ? "pause.fill" : "play.fill")
-              ) {
-                Task {
-                  if bibleAudioService.isAudioPlaying {
-                    bibleAudioService.pauseAudio()
-                  } else if bibleAudioService.isAudioPaused {
-                    bibleAudioService.playAudio()
-                  } else {
-                    await bibleAudioService.setupAudioPlayer(
-                      book: homeViewModel.randomDevotional?.abbreviation ?? "",
-                      chapter: homeViewModel.randomDevotional?.chapter ?? 0,
-                      verseStart: homeViewModel.randomDevotional?.start ?? 1,
-                      verseEnd: homeViewModel.randomDevotional?.end)
-                    bibleAudioService.isAudioPlaying = true
-                  }
-                }
-              }
-              .tint(colorScheme == .dark ? .white : .black)
-              .disabled(bibleAudioService.isAudioLoading)
-
-              Spacer()
-
-              Button(action: {
-                homeViewModel.showingEntrySheet = true
-              }) {
-                Image(systemName: "square.and.pencil")
-              }
-              .tint(colorScheme == .dark ? .white : .black)
-            }
-          }
-        #endif
+      
         ToolbarItem(placement: .navigationBarTrailing) {
           HStack {
 
@@ -251,10 +193,8 @@ struct HomeView: View {
           }
         }
       }
-
+      
       .overlay(alignment: .bottom) {
-        #if os(iOS)
-          if #unavailable(iOS 26.0) {
             HStack {
               HStack(spacing: 0) {
                 NavigationLink(destination: ArchiveView()) {
@@ -332,8 +272,6 @@ struct HomeView: View {
               .clipShape(Capsule())
               .padding(.horizontal, 10)
             }
-          }
-        #endif
       }
     }
     .onAppear {
