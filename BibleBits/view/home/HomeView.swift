@@ -21,6 +21,11 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
+                if homeViewModel.isRefreshing || bibleService.loading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding()
+                } else {
                     LazyVStack(alignment: .leading) {
                       if !homeViewModel.showingEntireChapter {
                         ForEach(homeViewModel.randomBibleData, id: \.id) { verse in
@@ -65,8 +70,9 @@ struct HomeView: View {
                     .frame(height: 30)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .font(.system(size: 13, weight: .regular, design: fontFamily.fontDesign))
+                }
             }
-             .refreshable {
+                .refreshable {
         refreshCount += 1
         if refreshCount >= 3 {
           requestReview()
@@ -103,6 +109,8 @@ struct HomeView: View {
           }
         }
       }
+            
+             
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -210,6 +218,7 @@ struct HomeView: View {
                   
                 }
             }
+            
         
             .onAppear {
                 checkIfPassageIsSaved(modelContext: modelContext)
