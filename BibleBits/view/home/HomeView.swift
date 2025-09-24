@@ -22,6 +22,7 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                     LazyVStack(alignment: .leading) {
+                      if !homeViewModel.showingEntireChapter {
                         ForEach(homeViewModel.randomBibleData, id: \.id) { verse in
                             Text("\(verse.verse_start)")
                                 .font(
@@ -35,15 +36,32 @@ struct HomeView: View {
                         .font(.system(size: fontSize, weight: .regular, design: fontFamily.fontDesign))
                         .lineSpacing(lineHeight)
                         .padding(.vertical, lineSpacing)
-                        .padding(.horizontal, 12)
+                        .padding(.horizontal, 16)
+                      } else {
+                        ForEach(homeViewModel.entireRandomBibleData, id: \.id) { verse in
+                            Text("\(verse.verse_start)")
+                                .font(
+                                    .system(
+                                        size: fontSize - 5, weight: .light, design: fontFamily.fontDesign)
+                                )
+                                .foregroundColor(.secondary).baselineOffset(3)
+                            + Text(" \(verse.verse_text) ")
+                        }
+                        .textSelection(.enabled)
+                        .font(.system(size: fontSize, weight: .regular, design: fontFamily.fontDesign))
+                        .lineSpacing(lineHeight)
+                        .padding(.vertical, lineSpacing)
+                        .padding(.horizontal, 16)
+                      }
                     }
+                    .padding(.vertical, 12)
                     
                     Button("Show Full Chapter") {
                         homeViewModel.showingEntireChapter.toggle()
                     }
                     .tint(.gray)
                     .buttonStyle(.bordered)
-                    .cornerRadius(12)
+                    .cornerRadius(8)
                     .frame(height: 30)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .font(.system(size: 13, weight: .regular, design: fontFamily.fontDesign))
