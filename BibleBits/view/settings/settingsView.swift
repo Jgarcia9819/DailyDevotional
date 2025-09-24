@@ -6,6 +6,7 @@ struct SettingsView: View {
   @AppStorage("isUserLoggedIn") private var isUserLoggedIn = false
   @Environment(\.modelContext) private var modelContext
   @Environment(\.requestReview) private var requestReview
+  @AppStorage("fontFamily") private var fontFamily: FontFamily = .serif
 
   var body: some View {
     NavigationStack {
@@ -16,12 +17,13 @@ struct SettingsView: View {
           }
         } header: {
           Text("Account")
-            .font(.system(size: 13, weight: .regular, design: .serif))
+            .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
         }
         Section {
           Button("Leave a Review") {
             requestReview()
           }
+          .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
         }
         //Section {
           //HStack {
@@ -38,6 +40,7 @@ struct SettingsView: View {
         //}
       }
       .navigationTitle("Settings")
+      .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
     }
   }
 

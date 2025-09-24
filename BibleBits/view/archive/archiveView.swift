@@ -7,6 +7,7 @@ enum pickerSelection {
 }
 
 struct ArchiveView: View {
+  @AppStorage("fontFamily") private var fontFamily: FontFamily = .serif
   @Environment(\.modelContext) private var modelContext
   @ObservedObject var bibleService = BibleService.shared
   @Query(sort: \Entry.createdAt, order: .reverse) private var entries: [Entry]
@@ -40,7 +41,7 @@ struct ArchiveView: View {
             if entries.isEmpty {
               Section {
                 Text("No entries yet")
-                  .font(.system(size: 16, weight: .light, design: .serif))
+                  .font(.system(size: 16, weight: .light, design: fontFamily.fontDesign))
                   .foregroundColor(.gray)
               }
             } else {
@@ -48,7 +49,7 @@ struct ArchiveView: View {
                 Section {
                   Text(entry.content)
                     .padding(.bottom, 2)
-                    .font(.system(size: 16, weight: .regular, design: .serif))
+                    .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
 
                 } header: {
                   HStack {
@@ -58,7 +59,7 @@ struct ArchiveView: View {
                     Spacer()
                     Text(entry.createdAt, style: .date)
                       .foregroundColor(.secondary)
-                      .font(.system(size: 13, weight: .regular, design: .serif))
+                      .font(.system(size: 13, weight: .regular, design: fontFamily.fontDesign))
                   }
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -93,7 +94,7 @@ struct ArchiveView: View {
               } header: {
                 Text(saved.createdAt, style: .date)
                   .foregroundColor(.secondary)
-                  .font(.system(size: 13, weight: .regular, design: .serif))
+                  .font(.system(size: 13, weight: .regular, design: fontFamily.fontDesign))
 
               }
               .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -124,7 +125,7 @@ struct ArchiveView: View {
               Text("Saved").tag(pickerSelection.savedPassages)
             }
             .pickerStyle(.segmented)
-
+            .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
           }
         }
       }

@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct AccountView: View {
+    @AppStorage("fontFamily") private var fontFamily: FontFamily = .serif
     @Environment(\.modelContext) private var modelContext
     @State private var showDeleteAlert = false
     @State private var showDeleteConfirmation = false
@@ -14,6 +15,7 @@ struct AccountView: View {
                         showDeleteAlert = true
                     }
                     .foregroundColor(.red)
+                    .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
                     .alert("Delete Account Data", isPresented: $showDeleteAlert) {
                         Button("Delete", role: .destructive) {
                             deleteAccountData(modelContext: modelContext)
@@ -25,6 +27,7 @@ struct AccountView: View {
                             "This will permanently delete all your account data. This action cannot be undone."
                         )
                     }
+                    .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
                     .alert("Data deleted successfully", isPresented: $showDeleteConfirmation) {
                         Button("OK", role: .cancel) {}
                     } message: {
@@ -33,6 +36,7 @@ struct AccountView: View {
                 }
             }
             .navigationTitle("Account Settings")
+            .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
         }
     }
 

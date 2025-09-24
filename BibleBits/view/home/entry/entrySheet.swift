@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct EntrySheetView: View {
+  @AppStorage("fontFamily") private var fontFamily: FontFamily = .serif
   @ObservedObject var homeViewModel = HomeViewModel.shared
   @FocusState private var isTextEditorFocused: Bool
   @Environment(\.dismiss) private var dismiss
@@ -17,7 +18,7 @@ struct EntrySheetView: View {
             Text(
               "\(homeViewModel.randomDevotional?.book ?? "") \(homeViewModel.randomDevotional?.chapter ?? 0):\(homeViewModel.randomDevotional?.start ?? 0)-\(homeViewModel.randomDevotional?.end ?? 0)"
             )
-            .font(.system(size: 18, weight: .regular, design: .serif))
+            .font(.system(size: 18, weight: .regular, design: fontFamily.fontDesign))
             .padding(.vertical, 4)
           }
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -27,14 +28,14 @@ struct EntrySheetView: View {
             .scrollContentBackground(.hidden)
             .background(Color.clear)
             .frame(minHeight: 200)
-            .font(.system(size: 16, weight: .regular, design: .serif))
+            .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
             .overlay(alignment: .topLeading) {
               if homeViewModel.entryText.isEmpty {
                 Text("Your reflection here...")
                   .foregroundColor(.gray)
                   .padding(.vertical, 8)
                   .allowsHitTesting(false)
-                  .font(.system(size: 16, weight: .regular, design: .serif))
+                  .font(.system(size: 16, weight: .regular, design: fontFamily.fontDesign))
 
               }
 
@@ -63,6 +64,7 @@ struct EntrySheetView: View {
               .success,
               trigger: buttonTrigger
             )
+            .font(.system(size: 13, weight: .regular, design: fontFamily.fontDesign))
             .tint(colorScheme == .dark ? .white : .black)
           }
         }

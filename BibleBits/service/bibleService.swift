@@ -112,6 +112,34 @@ class BibleService: ObservableObject {
     "HAG": "Book_of_Haggai",
     "ZEC": "Book_of_Zechariah",
     "MAL": "Book_of_Malachi",
+    // New Testament
+    "MAT": "Gospel_of_Matthew",
+    "MRK": "Gospel_of_Mark",
+    "LUK": "Gospel_of_Luke",
+    "JHN": "Gospel_of_John",
+    "ACT": "Acts_of_the_Apostles",
+    "ROM": "Epistle_to_the_Romans",
+    "1CO": "First_Epistle_to_the_Corinthians",
+    "2CO": "Second_Epistle_to_the_Corinthians",
+    "GAL": "Epistle_to_the_Galatians",
+    "EPH": "Epistle_to_the_Ephesians",
+    "PHP": "Epistle_to_the_Philippians",
+    "COL": "Epistle_to_the_Colossians",
+    "1TH": "First_Epistle_to_the_Thessalonians",
+    "2TH": "Second_Epistle_to_the_Thessalonians",
+    "1TI": "First_Epistle_to_Timothy",
+    "2TI": "Second_Epistle_to_Timothy",
+    "TIT": "Epistle_to_Titus",
+    "PHM": "Epistle_to_Philemon",
+    "HEB": "Epistle_to_the_Hebrews",
+    "JAS": "Epistle_of_James",
+    "1PE": "First_Epistle_of_Peter",
+    "2PE": "Second_Epistle_of_Peter",
+    "1JN": "First_Epistle_of_John",
+    "2JN": "Second_Epistle_of_John",
+    "3JN": "Third_Epistle_of_John",
+    "JUD": "Epistle_of_Jude",
+    "REV": "Book_of_Revelation",
   ]
 
   func getDevotionals() async throws {
@@ -157,7 +185,7 @@ class BibleService: ObservableObject {
       throw error
     }
   }
-
+/*
   func getBookInfo(book: String) async throws -> BookInfo {
     let book = BibleService.bookMapping[book] ?? book
     let urlString = "\(wikiURL)\(book)"
@@ -177,5 +205,5 @@ class BibleService: ObservableObject {
       throw error
     }
   }
-
+*/
 }

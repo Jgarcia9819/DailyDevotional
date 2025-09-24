@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct ReadView: View {
+  @AppStorage("fontFamily") private var fontFamily: FontFamily = .serif
   @Environment(\.modelContext) private var modelContext
   @Environment(\.dismiss) private var dismiss
   @State var savedPassage: Saved
@@ -20,7 +21,7 @@ struct ReadView: View {
               + Text(" \(verse.verse_text) ")
           }
           .textSelection(.enabled)
-          .font(.system(size: 18, weight: .regular, design: .serif))
+          .font(.system(size: 18, weight: .regular, design: fontFamily.fontDesign))
         }
         .listRowSeparator(.hidden)
       }
@@ -30,6 +31,7 @@ struct ReadView: View {
           Button("Cancel") {
             dismiss()
           }
+          .font(.system(size: 13, weight: .regular, design: fontFamily.fontDesign))
         }
       }
       .navigationTitle("\(savedPassage.book) \(savedPassage.chapter):\(savedPassage.start)-\(savedPassage.end)")

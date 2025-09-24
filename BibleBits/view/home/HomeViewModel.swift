@@ -80,10 +80,13 @@ class HomeViewModel: ObservableObject {
     }
 
     do {
-      let data = try await bibleService.getBibleData(
-        book: randomDevotional.abbreviation,
-        chapter: randomDevotional.chapter
-      )
+      let data = try await Task {
+        try await bibleService.getBibleData(
+          book: randomDevotional.abbreviation,
+          chapter: randomDevotional.chapter
+        )
+      }.value
+      
       let filtered = data.filter { verse in
         if let start = randomDevotional.start, let end = randomDevotional.end {
           return verse.verse_start >= start && verse.verse_start <= end
@@ -93,6 +96,7 @@ class HomeViewModel: ObservableObject {
         }
         return false
       }
+      
       await MainActor.run {
         self.randomBibleData = filtered
         self.entireRandomBibleData = data
@@ -101,7 +105,7 @@ class HomeViewModel: ObservableObject {
       print("Error fetching Bible data: \(error)")
     }
   }
-
+/*
   func fetchBookInfo() async {
     let bibleService = BibleService.shared
     do {
@@ -113,5 +117,6 @@ class HomeViewModel: ObservableObject {
       print("Error fetching book info: \(error)")
     }
   }
+ */
   
 }

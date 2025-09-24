@@ -43,7 +43,7 @@ struct ContentView: View {
           await homeViewModel.fetchBibleData()
           await homeViewModel.fetchRandomDevotional()
           await homeViewModel.fetchRandomBibleData()
-          await homeViewModel.fetchBookInfo()
+          //await homeViewModel.fetchBookInfo()
         } catch {
           print("Error fetching devotionals: \(error.localizedDescription)")
         }
