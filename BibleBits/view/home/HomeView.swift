@@ -1,11 +1,14 @@
 import SwiftData
 import SwiftUI
+import StoreKit
 
 struct HomeView: View {
+    @Environment(\.requestReview) private var requestReview
     @AppStorage("fontSize") private var fontSize: Double = 24
     @AppStorage("lineHeight") private var lineHeight: Double = 4
     @AppStorage("lineSpacing") private var lineSpacing: Double = 8
     @AppStorage("fontFamily") private var fontFamily: FontFamily = .serif
+    @AppStorage("refreshCount") private var refreshCount: Int = 0
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -46,6 +49,10 @@ struct HomeView: View {
                     .font(.system(size: 13, weight: .regular, design: fontFamily.fontDesign))
             }
              .refreshable {
+        refreshCount += 1
+        if refreshCount >= 3 {
+          requestReview()
+        }
         if !homeViewModel.entryText.isEmpty {
           homeViewModel.isRefreshing = true
           return
