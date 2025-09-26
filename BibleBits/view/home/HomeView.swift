@@ -9,6 +9,7 @@ struct HomeView: View {
     @AppStorage("lineSpacing") private var lineSpacing: Double = 8
     @AppStorage("fontFamily") private var fontFamily: FontFamily = .serif
     @AppStorage("refreshCount") private var refreshCount: Int = 0
+    @AppStorage("reviewTriggered") private var reviewTriggered: Bool = false
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
@@ -74,7 +75,8 @@ struct HomeView: View {
             }
                 .refreshable {
         refreshCount += 1
-        if refreshCount >= 3 {
+        if refreshCount >= 3 && !reviewTriggered {
+          reviewTriggered = true
           requestReview()
         }
         if !homeViewModel.entryText.isEmpty {
