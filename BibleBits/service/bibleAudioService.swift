@@ -12,7 +12,7 @@ struct BibleAudioTimings: Codable {
 class BibleAudioService: ObservableObject {
   let bibleAudioTimingsURL =
     "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/audio-timings"
-  let bibleAudioURL = "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/audio"
+  let bibleAudioURL = "https://bibleapi-ashy.vercel.app/api/proxy/bible/audio"
   @Published var audioTimings: [BibleAudioTimings] = []
   @Published var player: AVPlayer?
   @Published var isAudioPlaying: Bool = false
@@ -50,9 +50,8 @@ class BibleAudioService: ObservableObject {
     }
   }
 
-  func setupAudioPlayer(
-    book: String, chapter: Int, verseStart: Int = 1, verseEnd: Int? = nil, version: String = "ESV"
-  ) async {
+  func setupAudioPlayer(book: String, chapter: Int, verseStart: Int = 1, verseEnd: Int? = nil) async
+  {
     do {
       try AVAudioSession.sharedInstance().setCategory(.playback)
       try AVAudioSession.sharedInstance().setActive(true)
@@ -79,7 +78,7 @@ class BibleAudioService: ObservableObject {
       }
 
       // Setup audio player
-      let audioURL = "\(bibleAudioURL)/\(book)/\(chapter)/\(version)"
+      let audioURL = "\(bibleAudioURL)?book=\(book)&chapter=\(chapter)&version=ENGESV"
       guard let url = URL(string: audioURL) else {
         throw URLError(.badURL)
       }
