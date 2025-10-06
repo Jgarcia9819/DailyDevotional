@@ -12,7 +12,7 @@ struct BibleAudioTimings: Codable {
 class BibleAudioService: ObservableObject {
   let bibleAudioTimingsURL =
     "https://2801hae26l.execute-api.us-west-2.amazonaws.com/dev/api/audio-timings"
-  let bibleAudioURL = "https://bibleapi-ashy.vercel.app/api/proxy/bible/audio"
+  let bibleAudioURL = "https://bible-audio-api.jgarcia9819.workers.dev"
   @Published var audioTimings: [BibleAudioTimings] = []
   @Published var player: AVPlayer?
   @Published var isAudioPlaying: Bool = false
