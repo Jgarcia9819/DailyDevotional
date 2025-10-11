@@ -69,6 +69,13 @@ struct HomeView: View {
                         }
                     }
                     .padding(.vertical, 12)
+                    NavigationLink(destination: CopyrightView()) {
+                        Text("Copyright")
+                            .font(.caption)
+                            .underline()
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.bottom, 12)
 
                     Button("Show Full Chapter") {
                         homeViewModel.showingEntireChapter.toggle()
@@ -79,6 +86,7 @@ struct HomeView: View {
                     .frame(height: 30)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .font(.system(size: 13, weight: .regular, design: fontFamily.fontDesign))
+                    .padding(.bottom, 16)
                 }
             }
             .refreshable {
@@ -147,7 +155,7 @@ struct HomeView: View {
                                 Label("Settings", systemImage: "gearshape")
                                     .tint(colorScheme == .dark ? .white : .black)
                             }
-
+                            Divider()
                             Button("Font Settings", systemImage: "textformat.size") {
                                 homeViewModel.showingFontEditSheet = true
                             }

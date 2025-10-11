@@ -10,10 +10,12 @@ import SwiftUI
 import UIKit
 
 struct ContentView: View {
+  @AppStorage("firstAppearance") var firstAppearance = true
   @Environment(\.modelContext) private var modelContext
   @ObservedObject var bibleService = BibleService.shared
 
   init() {
+
     UINavigationBar.appearance().largeTitleTextAttributes = [
       .font: UIFont(
         descriptor: UIFontDescriptor.preferredFontDescriptor(withTextStyle: .largeTitle)
@@ -47,6 +49,11 @@ struct ContentView: View {
         } catch {
           print("Error fetching devotionals: \(error.localizedDescription)")
         }
+      }
+      .sheet(isPresented: $firstAppearance) {
+        WelcomeSheet()
+          .presentationDetents([.height(600)])
+          .interactiveDismissDisabled()
       }
   }
 
