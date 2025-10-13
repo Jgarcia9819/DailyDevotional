@@ -12,15 +12,19 @@ struct WelcomeSheet: View {
           .resizable()
           .scaledToFit()
           .frame(width: 150, height: 150)
+          .cornerRadius(36)
           .frame(maxWidth: .infinity)
           .padding(.top, 25)
-          .padding(.bottom, 25)
+          .padding(.bottom, 50)
 
         (Text("Bible Clips ")
           .bold()
           + Text(
             "is intended to be a place for exploration and reflection on passages of scripture all throughout the Bible."
           ))
+          .font(.system(size: 20, weight: .regular, design: .serif))
+          .multilineTextAlignment(.center)
+          .padding(.horizontal, 15)
         Spacer()
 
         VStack(alignment: .center) {
@@ -37,7 +41,6 @@ struct WelcomeSheet: View {
       }
       .padding(.horizontal, 30)
       .navigationTitle("Welcome!")
-      .presentationBackground(Color(uiColor: .systemBackground))
     }
   }
 }

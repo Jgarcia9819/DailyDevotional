@@ -50,7 +50,7 @@ struct ContentView: View {
           print("Error fetching devotionals: \(error.localizedDescription)")
         }
       }
-      .sheet(isPresented: $firstAppearance) {
+      .fullScreenCover(isPresented: $firstAppearance) {
         WelcomeSheet()
           .presentationDetents([.height(600)])
           .interactiveDismissDisabled()
